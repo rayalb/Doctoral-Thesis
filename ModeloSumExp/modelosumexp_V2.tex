@@ -1,0 +1,963 @@
+%http://saber.ucv.ve/bitstream/10872/12308/1/TEG%20Ronald%20M.%20Ram%C3%ADrez%20M..pdf
+
+% https://users.fmf.uni-lj.si/kostenko/teach/HankelNotes.pdf
+
+\chapter{Modelo de suma de exponenciales}\label{chap:ModeloSumExp}
+
+La relación entre el modelo exponencial, las matrices de Hankel, las aproximaciones de Padé, y las técnicas paramétricas de estimación espectral representa un campo de investigación  esencial en la teoría de sistemas y el análisis de señales. Este enfoque se ha convertido en un pilar fundamental en la comprensión y el modelado de sistemas dinámicos complejos. Estos conceptos se entrelazan en la búsqueda de herramientas y técnicas poderosas para representar y comprender sistemas dinámicos en diversas disciplinas
+
+En este capítulo, se explora la estrecha relación que existe entre la matriz de Hankel, utilizada para representar sistemas lineales y señales discretas, las aproximaciones de Padé, que proporcionan aproximaciones racionales para funciones complejas, el modelo exponencial, que describe la evolución temporal de sistemas dinámicos no lineales, y las técnicas paramétricas de estimación espectral, que permiten identificar y caracterizar componentes frecuenciales en señales complejas. Se estudiará cómo estas herramientas se complementan mutuamente y se aplican en problemas de modelado y análisis de alta complejidad.
+
+Los métodos de subespacios son técnicas de estimación espectral útiles en el procesamiento de señales y análisis de datos. La estabilidad  es un concepto importante al aplicar estos métodos para garantizar resultados precisos y confiables. Estos métodos son sensibles al ruido. El ruido puede degradar la precisión de las estimaciones espectrales. Por otro lado, la estabilidad numérica está relacionada con el número de condición de las matrices involucradas en los métodos de subespacios. Si una matriz se dice que está mal condicionada, los métodos de subespacios pueden amplificar los errores numéricos y dar lugar a resultados no confiables.
+
+Para mejorar el comportamiento de los métodos, se pueden realizar técnicas de procesamiento para reducir el ruido. También, realizar un análisis de sensibilidad para evaluar cómo pequeñas perturbaciones en los datos afectan las estimaciones resultantes puede ser útil para comprender la estabilidad numérica.
+
+
+%    Un problema presente en muchas aplicaciones de procesamiento de señales es recuperar  información útil  a partir de datos en el dominio del tiempo. La señal a detectar suele contener parámetros desconocidos tales como amplitud, fase, frecuencia, etc. 
+
+%	Los métodos de subespacios \cite{Stoica2005} son herramientas adecuadas para la estimación espectral. Los enfoques tradicionales incluyen la estimación de parámetros de señal mediante la técnica de invariancia rotacional (ESPRIT) \cite{Roy1989} o el método del \emph{matrix pencil} (MPM) \cite{Hua1990}, donde las frecuencias estimadas se obtienen mediante la solución de un problema de autovalores generalizados. 
+
+    \section{Matrices con estructura Hankel}\label{sec:HankelMatrix}
+
+        Las siguientes definiciones y resultados serán útiles a lo largo de la tesis
+
+        \begin{definition}[Matriz Hankel]\label{Def:Hankel}
+            Una matriz finita o infinita con estructura Hankel es una matriz en la que cada diagonal ascendente desde la izquierda a la derecha es contante. En términos de los elementos de la matriz, se tiene que $[\matX]_{ij} = [\matX]_{i+j,j+k}$ si $k = 0,\ldots,j-i$, con $i\le j$. Se define el espacio de las matrices Hankel como
+		      \begin{equation}
+			    \Hank = \big\{\matX\in\C^{m\times n}:\matX \text{ tiene estructura Hankel}\big\}.
+			    \label{Eq:HankelSet}
+		      \end{equation}
+	       \end{definition}
+
+        Sea $\h = \{h_n\}_{n\ge0}$ una sucesión de números complejos se denota $\Hank_{\h}$ como la matriz infinita con estructura Hankel $[\Hank_{\h}]_{ij} = h_{i+j-2}$, tal que
+
+        \begin{equation}
+	        \Hank_{\h} = \begin{bmatrix} h_0 & h_1 & h_2 & \cdots \\[0.3em] h_1 & h_2 & h_3 & \cdots \\[0.3em] h_2 & h_3 & h_4 & \cdots \\[0.3em]\vdots & \vdots & \vdots & \ddots \end{bmatrix}
+	        \label{Eq:InfiniteHankelMatrix}
+        \end{equation}
+        La sucesión $\h$ se suele denominar el símbolo de la matriz de Hankel.
+
+        A continuación se demostrará que la matriz \eqref{Eq:InfiniteHankelMatrix} es de rango finito solo sí tiene asociada una función racional. Para ello se necesita las siguientes definiciones. 
+        
+        \begin{definition}
+            Una función $f(z)$ se llama función racional si se puede escribir de la siguiente forma
+        \begin{equation}
+	        f(z) = \frac{p(z)}{q(z)}
+	        \label{Eq:RationalFunction}
+        \end{equation}
+        donde $p(z)$ y $q(z)$ son polinomios y $q(z)\neq 0$.
+        \end{definition}
+         Sin pérdida de generalidad se puede asumir que los polinomios $p(z)$ y $q(z)$ son primos, es decir, no existen polinomios $r(z)$, $p_1(z)$, $q_1(z)$, tal que $p(z)=r(z)p_1(z)$ y $q(z)=r(z)q_1(z)$. De esta forma se define el grado de $f(z)$ como
+        \begin{equation}
+            \deg(f(z)) = \max(\deg(p(z)),\deg(q(z))).
+            \label{Eq:degreeRationalfunction}
+        \end{equation}
+
+        Si $z=0$ no es un polo de $f(z)$, esta función se puede expandir a una serie de potencias 
+		\begin{equation}
+		    f(z) = \sum_{k=0}^\infty h_k z^{k},
+			\label{Eq:SymbolHankel}
+		\end{equation}
+		donde su radio de convergencia es igual a la distancia entre $z=0$ al conjunto de ceros de $q(z)$. 
+
+        \begin{definition}
+            Para la serie \eqref{Eq:SymbolHankel} se definen los siguientes operadores
+            \begin{itemize}
+                \item Operador de corrimiento hacia adelante
+		              \begin{equation} \setS^j:f(z)\mapsto z^j f(z) = \sum_{k=0}^\infty h_kz^{k+j},\quad j>1\label{eq:shiftOperator}\end{equation}
+                \item Operador de corrimiento hacia atrás
+                \begin{equation}\setS^{*j}:f(z)\mapsto \frac{f(z)-\sum_{n=0}^{j-1}h_nz^n}{z^j} = \sum_{k=0}^\infty h_{k+j}z^k, \quad j>0.\label{eq:shiftOperatorAdjoint}\end{equation}
+            \end{itemize}
+        \end{definition}
+		Notar que estos operadores presentan las siguientes propiedades
+		\begin{equation}\setS^n\setS^{*j}f(z) = \setS^{n-j}f(z)-\setS^{n-j}\sum_{k=0}^{j-1}h_kz^k, \quad \setS^{*n}\setS^jf(z) = \setS^{*(n-j)}f(z),\label{eq:ShiftOperatorProp}\end{equation}
+		
+		\begin{theorem}[Kronecker\cite{Gantmacher1960,Fuhrmann2011}]\label{Th:Kronecker}
+			Sea $\Hank_{\h}$ una matriz de Hankel con símbolo $\h = \{h_n\}_{n\ge 0}$. Luego $\Hank_{\h}$ tiene rango finito si y solo si la serie de potencias 
+            \[f(z) = \sum_{n=0}^\infty h_nz^n\] 
+            determina una función racional. En este caso
+			\begin{equation}
+				\rank(\Hank_{\h})=\deg(z f(z))
+				\label{Eq:HankelTheorem1}
+			\end{equation}
+		\end{theorem}
+		\begin{proof}
+			($\Rightarrow$) Se supone que $\rank(\Hank_{\h})=r\in\N$. Entonces los vectores formados por las primeras $r+1$ filas de $\Hank_{\h}$,  $\big\{f(z),S^*f(z),S^{*2}f(z),\ldots,S^{*r}f(z)\big\}$ son linealmente dependientes. Por lo tanto, 
+			\begin{equation}
+		      	c_0f(z) + c_1\setS^*f(z)+\cdots+c_r\setS^{*r}f(z) = 0
+			    \label{Eq:HankelTheorem_proof1}
+			\end{equation}
+			Aplicando $\setS^r$ a ambos lados de \eqref{Eq:HankelTheorem_proof1}, 
+			\begin{equation}
+			0 = \setS^r\bigg(\sum_{k=0}^rc_k\setS^{*k}f(z)\bigg) = \sum_{k=0}^rc_k\setS^{r}\setS^{*k}f(z) 
+			\label{Eq:HankelTheorem_proof2.1}
+			\end{equation}
+			y por la propiedad \eqref{eq:ShiftOperatorProp} se obtiene
+			\begin{equation}
+				\begin{aligned}
+				    0 & =c_0\setS^rf(z) + \sum_{k=1}^{r}c_k\bigg(\setS^{r-k}f(z)-\setS^{r-k}\bigg(\sum_{j=0}^{k-1}h_jz^j\bigg)\bigg) \\[0.3em]
+				    & = \sum_{k=0}^{r}c_k\setS^{r-k}f(z)-\sum_{k=1}^{r}c_k\setS^{r-k}\bigg(\sum_{j=0}^{k-1}h_jz^j\bigg)\\[0.3em] & = \sum_{k=0}^rc_k\setS^{r-k}f(z) - p(z) 
+				\end{aligned}
+				\label{Eq:HankelTheorem_proof2}
+			\end{equation}
+			donde $p(z)$ es tal que  
+			\begin{equation}
+				p(z) = \sum_{k=1}^{r}c_k\setS^{r-k}\bigg(\sum_{j=0}^{k-1}h_jz^j\bigg) =\sum_{k=0}^{r-1}p_kz^k.
+				\label{Eq:HankelTheorem_proof3}
+			\end{equation}
+			para algunos $p_0,\ldots,p_{r-1}$, con $\deg (p(z))\le r-1$. Luego, de \eqref{Eq:HankelTheorem_proof2} se obtiene que 
+			\[p(z) = \sum_{k=0}^{r}c_k\setS^{r-k}f(z).\]
+			
+			Usando \eqref{eq:ShiftOperatorProp} se obtiene
+			\begin{equation}
+				\begin{aligned} 
+				\sum_{k=0}^{r}c_k\setS^{r-k}f(z) & = \sum_{k=0}^rc_k\sum_{j=0}^\infty h_jz^{j+r-k}\\[0.3em]
+				& = \sum_{k=0}^{r}c_kz^{r-k}\bigg(\sum_{j=0}^\infty h_jz^j\bigg).
+				\end{aligned}
+				\label{eq:HankelThepre_proof3}  
+			\end{equation}
+			Sea 
+			\[q(z) = \sum_{k=0}^{r}c_kz^{r-k}.\]
+			Luego, \eqref{Eq:HankelTheorem_proof3} muestra que $f(z) = p(z)/q(z)$ es una función racional y 
+			\[\deg(z f(z)) \le \max(\deg(q(z)),\deg(z p(z)))\le r.\]
+			En particular, $c_r\neq 0$ dado que se asumió que $\rank(\Hank_{\h}) = r$.
+   
+			\vspace{2mm}
+   
+			($\Leftarrow$). Se asume que $f(z) = p(z)/q(z)$ es una función racional con $\deg(p(z))\le r-1$ y $\deg(q(z))\le r$ para algún $r\in\N$. Se consideran los números complejos $p_0,\ldots,p_{r-1}$, y $c_0,\ldots,c_r$ dados por
+			\[p(z) = \sum_{j=0}^{r-1}p_jz^j,\qquad q(z) = \sum_{j=0}^{r}c_{r-j}z^j. \]
+			 Luego, se obtiene
+			\begin{equation}
+				p(z) = f(z)q(z) = \sum_{k=0}^rc_k\setS^{r-k}f(z), \qquad q(z) = \sum_{k=0}^rc_kz^{r-k}.
+				\label{Eq:HankelTheorem_proof4}
+			\end{equation}
+			Aplicando $\setS^{*r}$ a $p(z)$ y por la propiedad \eqref{eq:ShiftOperatorProp} se obtiene
+			\begin{equation}
+				\setS^{*r}p(z) = \setS^{*r}\sum_{k=0}^rc_k\setS^{r-k}f(z) = \sum_{k=0}^rc_k\setS^{*k}f(z)
+				\label{Eq:HankelTheorem_proof5}
+			\end{equation}
+			
+			Sea \[\alpha(z) = \sum_{k=0}^{\infty}\alpha_kz^k,\]
+			donde 
+			\[\alpha_k =\begin{cases}p_k & k = 0,\ldots,r-1\\[0.3em]
+			0 & k= r,\ldots .
+			\end{cases}\]
+			Luego, $p(z) = \alpha(z)$. Usando la definición de $\setS^{*r}$ y de $\alpha(z)$ se obtiene
+			\[\setS^{*r}p(z)=\setS^{*r}\alpha(z) = \sum_{k=0}^{\infty}\alpha_{k+r}z^k = 0.\]
+			De \eqref{Eq:HankelTheorem_proof5} sigue que
+			\[\sum_{k=0}^{r}c_k\setS^{*k}f(z) = 0,\]
+			lo que significa que las primeras $r+1$ filas de $\Hank_{\h}$ son linealmente dependientes.
+			
+			
+			Se establece
+			\begin{equation}
+				m = \max\{k : k\le r,c_k\neq 0\},
+			\end{equation}
+			Claramente, $\setS^{*m}f(z)$ es una combinación lineal de $\setS^{*k}f(z)$ con $k\le m-1$, es decir,
+			\[\setS^{*m}f(z) = \sum_{k=0}^{m-1}d_k\setS^{*k}f(z),\]
+			con $d_0, d_1, \ldots, d_{m-1}$ constantes. Luego,
+			\[\setS^{*(m+j)}f(z) = \sum_{k=0}^{m-1}d_k\setS^{*(k+j)}f(z),\]
+			y $\setS^{*(m+j)}f(z)$ es una combinación lineal de $m$ filas de $\setS^{*(m+k)}f(z)$ con $0\le k\le m-1$. Por lo tanto, $\rank(\Hank_{\h})\le m$ y el rango de la matriz de Hankel es finito.
+		\end{proof}
+
+    \section{Modelo Exponencial}\label{sec:ModelDescription}
+
+		El modelo,
+		\begin{equation}
+			y_k = x_k + w_k,\qquad k=0,1,\ldots,
+			\label{Eq:noisySignal2}
+		\end{equation}
+		donde $x_k$ viene dado por
+		\begin{equation}
+			x_k = \sum_{i=1}^{r}c_iz_i^k  \qquad k = 0,1,\ldots, 
+			\label{Eq:Eq:NoiselessSignal}
+		\end{equation}
+		donde $z_i\in\C$ es una exponencial compleja, que se puede escribir como $z_i = e^{\xi_i\Delta}$, con $\xi_i\in\C$ y $\Delta$ es el paso de muestreo que debe ser $|\mathcal{I}m(\xi_i)|<\pi/\Delta$ para poder cumplir con \cite{Nyquist1928}. Además, se tiene que $c_i\in\C$ es la amplitud asociada a $z_i$ y $r$ es el orden del modelo. En \eqref{Eq:noisySignal2}, $w_k$ es un proceso Gaussiano complejo circularmente simétrico, $w_k\sim\NormalC(0,\eta^2)$. 
+  
+
+        Gracias al teorema \eqref{Th:Kronecker} se obtiene el siguiente resultado.
+        \begin{theorem}\label{Th:Kronecker2}
+            Sea la secuencia infinita definida en  \eqref{Eq:Eq:NoiselessSignal} se le asocia la matriz de Hankel infinita, $\Hank_{\x}$. Luego,
+            \begin{equation}
+                \rank(\Hank_{\x}) = r
+                \label{Eq:Kronecker2}
+            \end{equation}
+        \end{theorem}
+        \begin{proof}
+            A partir de la secuencia $\{x_k\}_{k\ge 0}$ se define la serie de potencias 
+	       	\begin{equation}
+			    f(z) = \sum_{k=0}^\infty x_k z^{k}
+			    \label{Eq:SymbolHankel1}
+		      \end{equation}
+            Por el Teorema \eqref{Th:Kronecker}, $\Hank_{\x}$ tiene rango finito y $f(z)$ se puede escribir como una función racional. Reemplazando \eqref{Eq:Eq:NoiselessSignal} en \eqref{Eq:SymbolHankel1} se obtiene
+            \begin{equation}
+                f(z) = \sum_{k=0}^\infty\bigg(\sum_{i=1}^rc_iz_i^k\bigg)z^k = \sum_{i=1}^kc_i\sum_{k=0}^{\infty}z_i^kz^k = \sum_{i=1}^r\frac{c_i}{1-z_iz}.
+                \label{Eq:ExpModel1}
+            \end{equation}
+            Por lo tanto, $f(z)$ es una función racional donde el polinomio del numerador es de grado $r-1$ y el polinomio del denominador es de grado $r$. Por lo tanto,
+            \begin{equation}
+                \deg(f(z))=r \Longleftrightarrow \rank(\Hank_\x) = r
+                \label{Eq:KroneckerResult}
+            \end{equation}
+        \end{proof}
+        Sea $\Hank_{\x}^{(n)}$ la submatriz principal de $n\times n$ obtenida a partir de $\Hank_{\x}$. Luego, $\rank(\Hank_{\x}^{(n)}) = r$ para cualquier $n\geq r$. A partir de aquí se considerarán solo matrices finitas de Hankel y se suprimirá el superíndice $(n)$, es decir, partiendo de un vector de dimensión $m+n-1$, $\x = [x_0,x_1,\ldots,x_{m+n-2}]^T$ se denota $\Hank_{\x}$ la matriz con estructura Hankel de $m\times n$. 
+        
+        \begin{definition}\label{Def:NormFrobeniusHankel}
+			La norma de Frobenius de una matriz de Hankel se puede escribir como
+			\begin{equation}
+				\|\Hank_{\x}\|_F^2 = \sum_{k=0}^{m+n-2}\alpha_k|x_k|^2
+				\label{Eq:Frobnorm}
+			\end{equation}
+			donde
+			\[\alpha_k = \begin{cases} k+1 &  0 \leq k < m\\
+			m &  m \leq k \leq n\\
+			m+n-k & n < k \leq n+m-1.
+			\end{cases}\]
+		\end{definition}
+        
+        Su descomposición en valores singulares resulta ser
+		\begin{equation}
+		      \Hank_{\x} = \matU\Lambdab\matV^H
+		      \label{Eq:SVD}
+		\end{equation}
+		donde $\Lambdab = \diag(\lambda_1,\lambda_2,\ldots,\lambda_p)$ es una matriz diagonal con los valores singulares ordenados en forma decrecientes donde $p=\min\{m,n\}$. Dado que en el modelo \eqref{Eq:noisySignal2} $\x$ solo se observa a través de $\y$, también se introduce la SVD de la señal ruidosa,
+		\begin{equation}
+		      \Hank_{\y} = \matQ\Sigmab\matP^H
+		      \label{Eq:SVD_noisy}
+		\end{equation}
+		donde $\Sigmab = \diag(\sigma_1,\sigma_2,\ldots,\sigma_p)$ es una matriz diagonal, con $\sigma_i$ valores singulares ordenados de forma decreciente. Claramente, $\Hank_{\y} = \Hank_{\x} + \Hank_{\w}$, donde $\Hank_{\w}$ es una matriz de Hankel asociada al vector de ruido $\w$.
+	
+        \subsection{Conexión con las aproximaciones de Padé}\label{sec:pade}
+			
+			El modelo exponencial esta estrechamente relacionado con el método de aproximación de Padé mediante los resultados vistos en la sección \eqref{sec:HankelMatrix} sobre matrices de Hankel.
+			 
+            Sea la secuencia de números complejos $\big\{x_k\big\}_{k\ge 0}$ asociada a la suma de exponenciales complejas definida en \eqref{Eq:Eq:NoiselessSignal}. Se define la serie de potencias
+            \begin{equation}
+                f(z) = \sum_{k=0}^\infty x_kz^k
+                \label{Eq:SymbolHankel_pade}
+            \end{equation}
+            Por el teorema \eqref{Th:Kronecker} esta función se puede descomponer en una función racional. La aproximación de Padé de $f(z)$ de ordenes $[\nu,\mu]$ se define como la forma irreducible de la función racional
+		      \begin{equation}
+		          R_{\nu,\mu}(z) = \frac{p_{\nu}(z)}{q_{\mu}(z)} =  \frac{\sum_{k=0}^{\nu}a_kz^k }{\sum_{k=0}^{\mu}b_kz^k}
+		        \label{Eq:PadeApprox}
+		      \end{equation} que satisface
+		      \begin{equation}
+		          \sum_{j=0}^{k}x_jb_{k-j}-a_k = 0, \quad k = 0,1,\ldots, \nu+\mu,
+		          \label{Eq:PadeApprox1}
+		      \end{equation}
+		      donde $b_{k-j} = 0$ para $k<j$ y $a_k = 0$ para $k>\nu$. Usando
+            \eqref{Eq:Eq:NoiselessSignal} se puede escribir
+		      \begin{equation}
+			         f(z) = \sum_{i=1}^r\frac{c_i}{1-z_iz}.
+			         \label{Eq:PadeApprox2}
+		      \end{equation}
+		      Por lo tanto, $f(z)$ es una función racional donde el polinomio del numerador es de
+            grado $r-1$ y el polinomio del denominador es de grado $r$ con polos igual a $1/z_i$. Luego, a partir de la aproximación de Padé, $R_{r-1,r}$ reconstruye la función $f(z)$.
+
+        \subsection{Propiedad de Invariancia de la Matrices Hankel}
+        
+        	Normalmente, no se tiene una expresión de la función \eqref{Eq:SymbolHankel_pade} sino la secuencia infinita de coeficientes $x_0,x_1,x_2,\ldots$. Con estos coeficientes, se define el siguiente funcional lineal en el espacio de polinomios 
+        	\begin{equation}
+        		\L(z^n) = x_n, \quad n=0,1,2,\ldots.
+        		\label{Eq:OrthPolynomial}
+        	\end{equation}
+        	Para un polinomio $h(z) = \sum_{i=0}^nc_nz^i$, dada la linealidad del funcional en \eqref{Eq:OrthPolynomial},se obtiene $\L(h(z)) = \sum_{i=0}^{n}c_nx_n$.
+        	
+        	Considerando una aproximación de Padé $[r-1,r]$, el polinomio del denominador se puede escribir como
+        	\begin{equation} q_r(z) = \prod_{i=1}^r(z-z_i) = z^r + b_{r-1}z^{r-1} + \cdots + b_1z + b_0. \label{Eq:Polynomial}\end{equation}
+        	donde la condición \eqref{Eq:PadeApprox1} se puede reescribir como
+        	\begin{equation}
+        	\sum_{i=0}^r b_ix_{k+i}=0, \quad k = 0,1,\ldots,r-1.
+        	\label{Eq:OrthPolynomial1}
+        	\end{equation}
+        	Sin embargo, esta última condición es equivalente a decir que
+        	\begin{equation}
+        		\L(z^kq_{r}(z)) = 0, \quad k = 0,1,\ldots,r-1.
+        		\label{Eq:OrthoPolynomial2}
+        	\end{equation}
+        	por lo que el polinomio $q_r(z)$ debe ser ortogonal a todos los polinomios de grado menor que con respecto al funcional linear $\L(\cdot)$.
+        	
+        	Los polinomios ortogonales se pueden obtener aplicando el proceso de ortogonalización de Gram-Schmidt a la base $\big\{1,z,z^2,\ldots\big\}$,
+        	\[\begin{aligned}
+        	& q_0(z) = 1,\\[0.3em]
+        	& q_1(z) = z - \frac{\langle z,q_0(z)\rangle}{\langle q_0(z),q_0(z)\rangle}q_0(z)\\[0.3em]
+        	& q_2(z) = z^2 -  \frac{\langle z^2,q_0(z)\rangle}{\langle q_0(z),q_0(z)\rangle}q_0(z) - \frac{\langle z^2,q_1(z)\rangle}{\langle q_1(z),q_1(z)\rangle}q_1(z),\\[0.3em]
+        	& \cdots\\[0.3em]
+        	&  q_r(z) = z^r - \frac{\langle z^r,q_0(z)\rangle}{\langle q_0(z),q_0(z)\rangle}q_0(z) - \cdots - \frac{\langle z^r,q_{r-1}(z)\rangle}{\langle q_{r-1}(z),q_{r-1}(z)\rangle}q_{r-1}(z)
+        	\end{aligned}\]
+        	
+        	Por ejemplo, la ortogonalidad con $q_0(z)$ requiere que $q_1(z)$ debe tener la forma
+        	\[q_1(x) = d_1\bigg[z-\frac{\langle q_0(z),z\rangle}{\langle q_0(z),q_0(z)\rangle}q_0(z)\bigg] = d_1(z-x_1).\]
+        	
+        	Resultando en \begin{equation} q_r(z) = d_r\det\begin{bmatrix} x_0 & x_1 & x_2 & \cdots & x_{r-1} & 1\\[0.3em] x_1 & x_2 & x_3 & \cdots & x_{r} & z\\[0.3em] \vdots & \vdots & \vdots & \ddots &\vdots\\[0.3em] x_{r} & x_{r+1} & x_{r+2} & \cdots & x_{2r-1} & z^r\\[0.3em]
+        	\end{bmatrix},
+        	\label{Eq:Orth8}
+        	\end{equation}
+        	donde $d_r$ es arbitraria y depende de la normalización de $q_r(z)$. Una forma más compacta de escribir \eqref{Eq:Orth8} es
+        	\begin{equation}
+        	q_r(z) = d_r\det\begin{bmatrix} \Hank_{\x} & \mathbf{z}\end{bmatrix}
+        	\label{Eq:OrthPoly}
+        	\end{equation} 
+        	donde $\mathbf{z} = [1\,\, z \,\,\cdots\, z^r]^T$. La matriz $\Hank_{\x}$ es una matriz de Hankel de $(r+1)\times r$ construida a partir de las muestras $x_0, x_1,\ldots, x_{2r-1}$. El determinante en \eqref{Eq:OrthPoly} se puede transformar multiplicando la $j-$ésima fila por $-z$ y sumándole la $(j+1)-$ésima fila para $j=r,r-1,\ldots,1$. De esta forma se obtiene
+        	%A partir de la teoría de polinomios ortogonales \cite{Szego1939} el polinomio $q(z)$ de grado $r$ en \eqref{Eq:PadeApprox} se escribe como
+        	%\begin{equation}
+        	%    q(z) = d_r\det\begin{bmatrix} \Hank_{\x} & \mathbf{z}\end{bmatrix}
+        	%    \label{Eq:OrthPoly}
+        	%\end{equation}
+        	%donde $\mathbf{z} = [1\,\, z \,\,\cdots\, z^r]^T$. La constante  
+        	%$d_r$ es arbitraria y depende de la normalización de $q(z)$. La matriz $\Hank_{\x}$ es una matriz de Hankel de $(r+1)\times r$ construida a partir de las muestras $x_0, x_1,\ldots, x_{2r-1}$. El determinante en \eqref{Eq:OrthPoly} se puede transformar multiplicando la $j-$ésima fila por $-z$ y sumandole la $(j+1)-$ésima fila para $j=r,r-1,\ldots,1$. De esta forma se obtine
+        	\begin{equation}
+        	q(z) = \det\big(z\Hank_{\x,l}-\Hank_{\x,f}\big)
+        	\label{Eq:detPencil}
+        	\end{equation}
+        	donde $\Hank_{\x,l}$ y $\Hank_{\x,f}$ son matrices construidas a partir de 
+        	$\Hank_{\x}$ borrando la última y primer fila respectivamente. El conjunto $\big\{z\Hank_{\x,l}-\Hank_{\x,f};z\in\C\big\}$ se conoce como haz de matrices. Igualando \eqref{Eq:detPencil} a cero, se observa que hay $r$ soluciones y se satisface la siguiente proposición
+        	\begin{prop}\label{Prop:Invariance}
+        		Sea $\Hank_{\x}$ una matriz de Hankel construida a partir de las muestras $x_0, x_1,\ldots,\x_{2n-1}$, con $n\geq r$. Luego, existen $\big\{\v_1,\cdots,\v_r\big\}$ linealmente independientes, de modo que
+        		\begin{equation}
+        		\Hank_{\x,f}\v_i = z_i\Hank_{\x,l}\v_i 
+        		\label{Eq:Invariance}
+        		\end{equation}
+        	\end{prop}
+        	La ecuación \eqref{Eq:Invariance} se conoce como el principio de invariancia 
+        	rotacional.
+        	
+        	
+        
+    \section{Métodos de subespacios}
+        Dado $m>r$, para la señal \eqref{Eq:Eq:NoiselessSignal}, usando la definición \eqref{Def:Hankel} se escribe la matriz de $(m+1)\times r$ con estructura Hankel asociada al vector $\x = [x_0,x_1, \ldots,x_{m+r-1}]^T$ como
+        \begin{equation}
+    		\Hank_{\x} = \begin{bmatrix} x_0 & x_1 & \cdots & x_{r-1} \\[0.3em]										 x_1 & x_2 & \cdots & x_{r} \\[0.3em]
+		      \vdots & \vdots & \ddots & \vdots \\[0.3em]
+		      x_{m} & x_{m+1} & \cdots & x_{m+r-1}\\[0.3em]
+		      \end{bmatrix}
+		      \label{Eq:HankMatrix_1}
+		\end{equation}
+        Usando la relación  encontrada en la sección \ref{sec:ModelDescription}, entre las matrices de Hankel y el modelo exponencial, se considera el polinomio definido en \eqref{Eq:Polynomial} cuyos ceros son los $z_i$,
+        \begin{equation} 
+		      q(z) = z^{r}+\sum_{k=0}^{r-1}q_kz^{k}.
+		      \label{Eq:prony_pol}
+	    \end{equation}
+        Para un $k\ge 0$ se obtiene
+        \begin{equation}
+            \begin{aligned} 
+                0 & = \sum_{i=1}^r c_iz_i^kq(z_i)=\sum_{i=1}^rc_iz_i^k(z_i^r + q_{r-1}z_i^{r-1}+\cdots+q_0)  \\[0.3em]
+                  & = \sum_{i=1}^rc_iz_i^{k+r} + \sum_{j=0}^{r-1}q_j\bigg(\sum_{i=1}^rc_iz_i^{j+k}\bigg) \\[0.3em]
+                  & = x_{k+r} + \sum_{j=0}^{r-1}q_jx_{k+j}.
+            \end{aligned}
+            \label{Eq:PronyEquation}
+        \end{equation}
+
+        En otras palabras, los datos $x_k$ se generan como
+        \begin{equation}
+            \begin{bmatrix}
+                x_0 & \cdots & x_{r-1}\\[0.3em]
+                \vdots & \ddots & \vdots \\[0.3em]
+                x_{m} & \cdots & x_{m+r-1}
+            \end{bmatrix}\begin{bmatrix} q_0 \\[0.3em]\vdots \\[0.3em]q_{r-1}
+            \end{bmatrix}= - \begin{bmatrix} x_r\\[0.3em]\vdots \\[0.3em] x_{m+r}
+            \end{bmatrix}.
+            \label{Eq:PronyEquation2}
+        \end{equation}
+        Definiendo los vectores $\x_r=[x_r,\ldots,x_{m+r}]$ y $\q = [q_0, \ldots, q_{r-1}]^T$, el sistema \eqref{Eq:PronyEquation2} se puede escribir como 
+	    \begin{equation}
+		      \Hank_{\x} \q = -\x_r,
+		      \label{prony:eq}
+	       \end{equation}
+        Esta sencilla configuración es lo que se conoce como el método de Prony para estimar los modos $z_i$ \cite{Prony1975}. El algoritmo \eqref{Algorithm_prony} resume los pasos del método.
+	    \begin{algorithm}
+		      \caption{Método de Prony}
+		      \begin{algorithmic}[1]
+			     \State {Entradas: $\Hank_{\x}\in\C^{(m+1)\times r}$ y $\mathbf{x}_r = [x_r \cdots x_{m+r}]^T$.}
+			     \State {Resolver \eqref{prony:eq} }
+			     \State {Determinar las raíces $z_i$, $i = 1,\ldots, r$ del polinomio de Prony \eqref{Eq:prony_pol}}	
+		      \end{algorithmic}
+		      \label{Algorithm_prony}
+	    \end{algorithm} 
+     
+        Desafortunadamente, $\Hank_{\x}$ es una matriz mal condicionada y resolver \eqref{prony:eq} para $\q$ puede ser muy sensible para datos ruidosos. Además, obtener los $z_i$ como las raíces de $q(z)$ también puede resultar una tarea difícil cuando \eqref{Eq:Eq:NoiselessSignal} se ve perturbada por el ruido.
+
+        La matriz de Hankel \eqref{Eq:HankMatrix_1} admite un descomposición de Vandermonde,
+		\begin{equation}
+		\Hank_{\x} = \matZ_m\matC\matZ_{r-1}^T,
+		\label{Hdecomposition:eq}
+		\end{equation}
+		donde  $\matC =\diag(c_1,\cdots,c_r)$, y $\matZ_m$ y $\matZ_{r-1}$ son matrices de Vandermonde 
+		\begin{equation}
+		\matZ_l = \begin{bmatrix} 1 & \cdots & 1 \\[0.3em] 
+		z_1  & \cdots & z_r \\[0.3em] 
+		\vdots  &        & \vdots \\[0.3em]
+		z_1^{l} & \cdots & z_r^{l} \\[0.3em]
+		\end{bmatrix},
+		\label{Eq:VandermondeMatrix}
+		\end{equation}
+		
+        Usando esta descomposición de Vandermonde se han  propuesto enfoques más robustos al método de Prony. Considere la descomposición en valores singulares de $\Hank_{\x}$ en \eqref{Eq:SVD}, donde las columnas de $\matU$ generan el espacio columna de $\Hank_{\x}$ y se identifican con el subespacio de señal en $\C^{m+1}$. Como los $z_i$  son todos distintos y $m>r$, se obtiene que $\rank(\matZ_m)=\rank(\matZ_{r-1})=r$. Por lo tanto, la columnas de $\matZ_m$ también generan subespacio de señal. Entonces, existe una matriz invertible $\matG\in\C^{r\times r}$ tal que 
+	\begin{equation}
+		\matZ_m  = \matU \matG.
+		\label{Zm:eq}
+	\end{equation}
+
+	Definiendo las siguientes matrices
+	\begin{align}
+		\matZ_{m,l} &= \left[\begin{array}{c}
+		\matI_{m-1} \\ \mathbf{0}_{1\times m-1}
+		\end{array}\right]^T\matZ_m \qquad \matZ_{m,f} = \left[\begin{array}{c}\mathbf{0}_{1\times m-1} \\ \matI_{m-1}\end{array}\right]^T\matZ_m.
+		\label{vandermonde_lf:eq}\\
+		\matU_{l} &=\left[\begin{array}{c}
+		\matI_{m-1} \\ \mathbf{0}_{1\times m-1}
+		\end{array}\right]^T\matU \qquad \matU_{f} = \left[\begin{array}{c}\mathbf{0}_{1\times m-1} \\ \matI_{m-1}\end{array}\right]^T\matU. \nonumber
+	\end{align}
+	donde las matrices $\matZ_{m,f}$ ($\matU_f$) y $\matZ_{m,l}$ ($\matU_l$) se obtiene a partir de $\matZ_{m}$ ($\matU$) borrando la primera y última fila respectivamente, es fácil verificar la propiedad de invariancia rotacional dada por
+	\begin{equation}
+		\matZ_{m,f} = \matZ_{m,l}\matZ,
+		\label{rotationalprinciple:eq}
+	\end{equation}
+	donde $\mathbf{Z} = \diag(z_1, \ldots z_r)$. Reemplazando \eqref{Zm:eq} en  \eqref{vandermonde_lf:eq}, se obtiene que  $\matZ_{m,l}  = \matU_l \matG$ y 
+	$\matZ_{m,f}  = \matU_f \matG$. Por lo tanto, de \eqref{rotationalprinciple:eq} se obtiene que 
+	\begin{equation}
+		\matU_{f} \matG = \matU_{l}\matG\matZ. 
+		\label{Esprit:eq}
+	\end{equation}
+	Esta última ecuación conduce a un problema de autovalores generalizados para obtener las frecuencias desconocidas $z_1,\ldots, z_r$ y caracteriza el algoritmo \eqref{Algorithm_esprit} conocido como ESPRIT  \cite{Roy1989}.
+
+	\begin{algorithm}
+		\caption{ESPRIT}
+		\begin{algorithmic}[1]
+			\State {Entradas: $\Hank_{\x}\in\C^{(m+1)\times r}$.}
+			\State {Hallar la descomposición en valores singulares de $\Hank_{\x} = \matU\Lambdab\matV^H$.}
+			\State {Construir las matrices $\matU_f$, $\matU_l$.}
+			\State {Hallar las raíces $z_i$, $i = 1,\ldots, r$ resolviendo  $\matU_{f} \v = z \matU_{l}\v$.}	
+		\end{algorithmic}
+		\label{Algorithm_esprit}
+	\end{algorithm}	
+
+	Un	método relacionado explota la relación entre $	\Hank_{\x,f}$ y $\Hank_{\x,l}$, definidas de acuerdo con \eqref{vandermonde_lf:eq}. Usando  \eqref{Hdecomposition:eq} y \eqref{rotationalprinciple:eq}, se obtienen
+	\begin{equation}
+		\Hank_{\x,l} = \matZ_{m,l}\matD\matZ_{r-1}^T, \qquad 	\Hank_{\x,f} = \matZ_{m,l}\matZ\matD\matZ_{n-1}^T.
+		\label{eq:VandermondeDecomposition}
+	\end{equation}
+
+	Para algún $z\in \C$, 
+	\[\Hank_{\x,f} -z \Hank_{\x,l} = \matZ_{m,l}(\matZ-z\matI_r)\matD\matZ_{r-1}^T.
+	\]
+
+	Dado que $\matZ_{m,l}$, $\matD$, y $\matZ_{r-1}$ son matrices de rango completo, los entradas en la diagonal de $\matZ$ son las soluciones del problema de autovalores generalizados
+	\begin{equation}
+		\Hank_{\x,f} \v = z \Hank_{\x,l}\v.
+		\label{MPM:eq}
+	\end{equation}
+	Esta método se conoce como Matrix Pencil (MPM) \cite{Hua1990} debido a que el conjunto  $\{\Hank_{\x,f} -z \Hank_{\x,l}; z \in \C\}$ forma lo que se conoce como un \emph{matrix pencil}. Los pasos del método se muestran en el algoritmo \eqref{Algorithm_MPM}.
+
+	\begin{algorithm}
+		\caption{Matrix Pencil Method}
+		\begin{algorithmic}[1]
+			\State {Entrada: $\Hank_{\x}\in\C^{(m+1)\times r}$.}
+			\State {Construir las matrices $\Hank_{\x,f}$, $\Hank_{\x,l}$.}
+			\State {Determinar las raíces $z_i$, $i = 1,\ldots, r$ resolviendo $\Hank_{\x,f}\v = z \Hank_{\x,l}\v$.}	
+		\end{algorithmic}
+		\label{Algorithm_MPM}
+	\end{algorithm}		
+	Notar que en el caso sin ruido, \eqref{Esprit:eq} y \eqref{MPM:eq} son equivalentes, y tanto MPM como ESPRIT obtienen las mismas soluciones \cite{Hua1991}.	
+
+	Como se mencionó anteriormente las primeras $r$ columnas de $\matU$ forman un base ortornormal que genera el subespacio columna de $\matZ_m$. Por lo tanto, las columnas de la matriz $\matU^\perp = [\u_{r+1}\ldots\u_{m}]$ generan un subespacio que es ortogonal al generado por $\{\u_1,\ldots,\u_r\}$. Luego, la proyección ortogonal de las columna de la matriz $\matZ_m$ sobre el subspacio generado por las columnas $\matU^\perp$ es 
+
+	\begin{equation}
+		\matU^\perp(\matU^\perp)^H\z_i = \mathbf{0}, \qquad i = 1,\ldots,r,
+        \label{eq:MUSIC2}
+	\end{equation}
+	donde $\z_i = [1\ z_i\ \cdots\  z_i^{m}]^T$.
+
+	El método MUSIC (multiple signal classification) \cite{Schmidt1986} se basa en este principio. Por lo tanto, los $z_i$ son hallados determinando la ubicación de los $r$ mínimos de la función 
+	\begin{equation} P_{MUSIC}(\z) = \|(\matU^{\perp})^H\z\|_2^2.\label{Eq:MUSIC_eq}\end{equation}
+	La precisión de este método está limitada por la resolución de la grilla definida por el vector $\z$ en la que se evalúa la función \eqref{Eq:MUSIC_eq}. Si la grilla es demasiado gruesa, se pueden perder detalles finos en la ubicación de las frecuencias. Por otro lado, si la grilla es muy fina, el cálculo puede volverse computacionalmente costoso. 
+	%In \cite{Stoica1991} is shown that ESPRIT outperforms MUSIC.				
+
+	\begin{algorithm}
+		\caption{MUSIC}
+		\begin{algorithmic}[1]
+			\State {Entradas: $\Hank_{\x}\in\C^{(m+1)\times r}$.}
+			\State {Descomposición en valores singulares de $\Hank_{\x} = \matU\Lambdab\matV^H$.}
+			\State {Construir la matriz $\matU^\perp$.}
+			\State {Determinar las raíces $z_i$, $i = 1,\ldots, r$ resolviendo $P_{MUSIC}(\mathbf{z}) = \mathbf{0}$.}	
+		\end{algorithmic}
+		\label{Algorithm_music}
+	\end{algorithm}	
+
+	Cabe destacar que los métodos introducidos hasta aquí se basan en suposiciones donde el parámetro $r$ es conocido y la señal no está contaminada con ruido aditivo. 
+
+	Generalmente, el parámetro $r$ es desconocido y debe ser estimado a partir de los datos antes del problema de estimación. Incluso si $r$ es conocido, la señal puede estar contaminada con ruido y debe ser preprocesada con el fin de mitigar el efecto del ruido. 
+
+	En los capítulos subsiguientes se abordará el estudio de la mitigación del ruido y se mostrará que aunque uno obtenga una buena estimación de la señal el cálculo de autovalores mediante ESPRIT o MPM puede resultar inestable. %Por otro lado, también se abordará el problema de estimación del parámetro $r$. En ambos casos se propondrán soluciones novedosas para contrarrestar estos problemas.
+
+        
+
+        
+        
+        
+       
+            
+
+
+%	Se denota la función indicadora sobre un conjunto $\setX$ como
+%	\begin{equation}
+%		\chi_{\setX}(\x) = \begin{cases} 0 & \x\in\setX,\\
+%			\infty & \x\notin\setX.
+%		\end{cases} 
+%		\label{eq:indicator}
+%	\end{equation}
+%	
+
+	
+	\section{Métodos de reducción de ruido}
+
+	La señal va a estar contaminada con ruido aditivo y debe ser preprocesada con el fin de mitigar el efecto del ruido. Asumiendo el modelo de señal ruidosa definido en \eqref{Eq:noisySignal2}, se forma la matriz $\Hank_{\y}$ con estructura Hankel. Si $r$ es desconocido, el rango de $\Hank_{\y}$ es $n>r$.
+
+	%Debido a que el número de frecuencias es conocido o fue estimado previamente, en un primer enfoque, se busca la estimación del espacio columna de $\Hank_{\y}$ a partir de su descomposición en valores singulares. Este problema puede ser formulado de la siguiente manera
+
+	\begin{Prob}\label{Prob:1}
+		Dada un matriz $\Hank_{\y}\in\C^{m\times n}$, $r\in\N$ tal que $1\le r\le \min\{m,n\}$ encontrar una solución $\matH^\star\in\C^{m\times n}$ a 
+		\begin{equation}
+			\begin{aligned} 
+				& \min_{\matH\in\C^{m\times n}} \quad \|\Hank_{\y}-\matH\|_F^2\\[0.3em]
+				& \text{sujeto a} \quad \rank(\matH) \le r.
+			\end{aligned}
+			\label{Eq:LowRank_Approximation1}
+		\end{equation}
+	\end{Prob}
+	Este problema fue resuelto en \cite{Eckart1936} y la solución es 
+	\begin{equation}
+		\matH^\star = \svd_r(\Hank_{\y}) =\bigg\{ \sum_{i=1}^r\sigma_i\u_i\v_i^H : \sum_{i=1}^{\min\{m,n\}}\sigma_i\u_i\v_i^H  \text{ es la SVD de } \Hank_{\y}\bigg\}
+		\label{Eq:LowRank_Approximation2}
+	\end{equation}
+	es decir se retienen los valores singulares dominantes de la matriz de Hankel ajustando a cero los restantes de modo de obtener una aproximación de bajo rango. Desafortunadamente, el problema \eqref{Prob:1} no es convexo debido a la restricción sobre el rango, y la solución \eqref{Eq:LowRank_Approximation2} puede no ser única. Además, la solución resultante en \eqref{Eq:LowRank_Approximation2} no preserva la estructura Hankel.  
+
+    \subsection{Relajación Convexa para aproximaciones de bajo rango.}
+    A continuación, se denota la función indicadora sobre un conjunto $\setX$ como
+	\begin{equation}
+		\chi_{\setC}(\x) = \begin{cases} 0 & \x\in\setC,\\
+			\infty & \x\notin\setC.
+		\end{cases} 
+		\label{eq:indicator}
+	\end{equation}
+	También, se define el conjunto de matrices con rango igual o menor a $r\in\N$ como
+	\begin{equation}
+		\setC_{(r)} = \big\{\matX\in\C^{m\times n}:\rank(\matX)\leq r\big\}.
+		\label{Eq:SetRank_r}
+	\end{equation}
+	Por lo tanto, $\chi_{\setC_{(r)}}(\matX)$ es la función indicadora sobre el conjunto de matrices de rango como máximo $r$.
+
+	Usando el Teorema \ref{Th:Kronecker2} para el modelo exponencial visto en la sección \ref{sec:ModelDescription}, se puede formular un problema de optimización con los requisitos de que la solución esté en la intersección entre el subespacio de matrices con rango $r$ y el subespacio que contiene matrices con estructura Hankel. Para un $r$ dado, se plantea el siguiente problema de optimización
+
+	\begin{Prob}\label{Prob:minCadzow}
+		Dada la matriz $\Hank_{\y}\in\C^{m\times n}$, $r\in\N$ tal que $1\le r\le \min\{m,n\}$ encontrar la solución $\matH^\star\in\C^{m\times n}$ a			
+		\begin{equation}
+			\begin{aligned}
+				& \min_{\matH\in\Hank} \quad \|\Hank_{\y}-\matH\|_F \\[0.3em]
+				& \text{sujeto a}\quad \rank(\matH)\le r
+			\end{aligned}
+			\label{Eq:minCadzow}
+		\end{equation}
+	\end{Prob}
+	Debido a que la restricción sobre el rango es no convexa, el problema \eqref{Prob:minCadzow} es difícil de resolver. En \cite{Cadzow1988} se propone un procedimiento iterativo donde en cada iteración se alternan proyecciones en el espacio de matrices de rango $r$ con proyecciones en el espacio de matrices Hankel. Primero se obtiene una aproximación de bajo rango mediante \eqref{Eq:LowRank_Approximation2}, es decir se obtiene, 
+	\begin{equation}
+		\matX = \svd_r(\Hank_{\y}).
+	\end{equation}
+	Luego, se obtiene la aproximación de Hankel donde los elementos $(k,l)-$ésimos de $\matH^\star$ se obtiene promediando los elementos de las antidiagonales de $\matX$, es decir
+	\begin{equation}
+		[\matH^\star]_{kl} = \frac{1}{|\Omega_{k+l}|}\sum_{(k',l')\in\Omega_{k+l}}[\matX]_{k'l'},
+		\label{Eq:HankelProjection}
+	\end{equation}
+	donde $\Omega_{k+l}$ es el conjunto de índices correspondiente al $(k+l)-$ésima antidiagonal de $\matX$, y $|\Omega_{k+l}|$ es el cardinal del conjunto. El pseudocócdigo de este procedimiento se describe en el Algoritmo \eqref{Algorithm_Cadzow}. 	
+	\begin{algorithm}
+		\caption{Pseudo-código para el algoritmo en \cite{Cadzow1988}}
+		\begin{algorithmic}[1]
+			\State{\textbf{Entradas}: matriz de Hankel $\Hank_{\y}$, rango deseado $r$, tolerancia de error, $\varepsilon$}
+			\State{\textbf{Salidas}: Matriz $\matH$ con estructura Hankel y $\rank(\matH)\le r$.}
+			\State{$\matX = \svd_r(\Hank_{\y})$. }
+			\State{$\matH$ : proyección de $\matX$ sobre $\Hank$, usando \eqref{Eq:HankelProjection}.}
+			\While{$\|\matX-\matH\|_F>\varepsilon$}
+				\State{$\matX = \svd_r(\matH)$. }
+				\State{$\matH$ : proyección de $\matX$ sobre $\Hank$, usando \eqref{Eq:HankelProjection}.}
+			\EndWhile	
+		\end{algorithmic}
+		\label{Algorithm_Cadzow}
+	\end{algorithm} 
+
+	Teniendo en cuenta el teorema \eqref{Th:Kronecker}, en un trabajo mas reciente \cite{Andersson2014}, se propone el siguiente problema  
+	\begin{equation}
+		\begin{aligned} 
+			& \min_{\hat{\y}} \quad \|\y - \hat{\y}\|_2^2 \\[0.3em]
+			& \text{sujeto a} \quad  \rank(\Hank_{\hat{\y}}) = r.
+		\end{aligned}
+		\label{Eq:Andersson1}
+	\end{equation}
+	donde la matriz de Hankel $\Hank_{\hat{\y}}\in\C^{m\times n}$ se define a partir del vector $\hat{\y} = [\hat{y}_0, \hat{y}_1,\ldots, \hat{y}_{m+n-2}]^T$.
+	Debido a la restricción en el rango de la matriz este en un problema no convexo. Sin embargo, se puede reformular como	
+	\begin{equation}
+		\begin{aligned} 
+			& \min_{\matA,\hat{\y}} \quad \chi_{\setC_{(r)}}(\matA) + \|\y-\hat{\y}\|_2^2\\[0.3em]
+			& \text{sujeto a} \quad  \matA = \Hank_{\hat{\y}}.
+		\end{aligned}
+		\label{Eq:Adenrsson2}			 
+	\end{equation}
+	Este problema tiene un función de costo que consta de dos términos, cada uno dependiendo solo de las variables $\matA$ e $\y$, junto con una restricción lineal. La formulación del problema, por lo tanto, es adecuada para ser resuelta utilizando el método de multiplicadores alternados (ADMM) \cite{Boyd2011}. ADMM es una técnica iterativa en la se encuentra una solución a un problema global más grande, encontrando soluciones a subproblemas más pequeños. Se puede ver como un intento de combinar los beneficios de la descomposición dual y los métodos del Langrangiano aumentado para la optimización con restricciones. En el apéndice \ref{App:ADMM}, se presenta una vista más general del método ADMM.
+	
+	
+	A continuación se define la función Langrangeana aumentada del problema \eqref{Eq:Adenrsson2} como
+	\begin{equation}
+		\L(\matA,\hat{\y},\Lambdab) =\chi_{\setC_{(r)}}(\matA) + \|\y-\hat{\y}\|_2^2  + \langle\Lambdab,\matA-\Hank_{\hat{\y}}\rangle + \frac{\rho}{2}\|\matA - \Hank_{\hat{\y}}\|_F^2,
+		\label{Eq:Andersson3}
+	\end{equation}
+	donde $\Lambdab\in\R^{(m+1)\times n}$ es el matriz de multiplicadores de Lagrange y $\rho$ es un parámetro de penalidad constante. La función \eqref{Eq:Andersson3} es similar al lagrangeano convencional excepto por el término cuadrático. Éste se hace cero cuando $\matA = \Hank_{\hat{\y}}$, es decir, cuando la solución es factible. 
+
+	El lagrangiano aumentado se puede reescribir de la siguiente manera
+	\begin{equation}
+		\L(\matA,\hat{\y},\Lambdab) = \chi_{\setC_{(r)}}(\matA) + \|\y-\hat{\y}\|_2^2 + \frac{\rho}{2}\|\matA-\Hank_{\hat{\y}}+\frac{1}{\rho}\Lambdab\|^2_F -\frac{1}{2}\|\Lambdab\|_F^2
+		\label{Eq:Andersson4} 
+	\end{equation}
+
+	Para minimizar \eqref{Eq:Andersson4}, ADMM usa una estrategia iterativa, es decir dados $\matA^{i}, \hat{\y}^{i}$ y $\Lambdab^i$ en el paso $i-$ésimo, las variables $\matA$, $\y$ y $\Lambdab$ se actualizan de la siguiente forma 
+	\begin{itemize}
+		\item[a)] Se obtiene la matriz $\matA$ resolviendo el siguiente problema de optimización
+			\begin{equation} 
+				\matA^{i+1}  = \argmin_{\matA}\L(\matA,\hat{\y}^i,\Lambdab^i) = \arg\min_{\matA} \bigg\{\chi_{\setC_{(r)}}(\matA) + \frac{\rho}{2}\|\matA - \Hank_{\hat{\y}^i}+\frac{1}{\rho}\Lambdab^i\|_F^2\bigg\}
+				\label{Eq:Andersson5}				
+			\end{equation} 
+			Este problema se resuelve como la proyección de $\Hank_{\hat{\y}^i}-\frac{1}{\rho}\Lambdab^i$ sobre el espacio $\setC_{(r)}$,
+			\begin{equation}
+				\matA^{i+1} = \svd_r(\Hank_{\hat{\y}^i}-\frac{1}{\rho}\Lambdab^{i})
+			\end{equation}
+	
+		\item[b)] A continuación, para actualizar la variable $\y$ se resuelve el siguiente problema de optimización
+			\begin{equation}
+				\hat{\y}^{i+1} = \argmin_{\hat{\y}} \L(\matA^{i+1},\hat{\y},\Lambdab^i) = \arg\min_{\hat{\y}} \bigg\{\|\y - \hat{\y}\|_2^2 + \frac{\rho}{2}\|\matA^{i+1} - \Hank_{\hat{\y}}+\frac{1}{\rho}\Lambdab^i\|_F^2\bigg\}
+				\label{Eq:Andersson6}
+			\end{equation}
+			Se introduce el siguiente vector
+			\begin{equation}
+				\b = \bigg[\sum_{(k',l')\in\Omega_{k+l}}\big[\matA^{i+1}+\frac{1}{\rho}\Lambdab^{i}\big]_{k'l'}\bigg]_{j=0}^{m+n-2}
+			\end{equation}
+			donde cada componente de $\b$ es la suma de las antidiagonales de $\matA^{i+1}+\Lambdab^{i}/\rho$. También, el término $\|\matA^{i+1}+\Lambdab^{i}/\rho - \Hank_{\hat{\y}}\|_F^2$, se puede aproximar mediante \eqref{Eq:Frobnorm} como
+			\[\sum_{i=0}^{m+n-2}\alpha_i|\hat{y}_i-b_i/\alpha_i|^2.\]
+			Reemplazando en \eqref{Eq:Andersson6} se obtiene
+			\begin{equation}
+				\hat{\y}^{i+1} = \argmin_{\hat{\y}}\sum_{i=0}^{m+n-2}|y_i-\hat{y}_i|^2 + \frac{\rho}{2}\sum_{i=0}^{m+n-2}\alpha_i|\hat{y}_i-b_i/\alpha_i|^2.
+			\end{equation}
+			Finalmente por cuadrados mínimos se obtiene
+			\begin{equation}
+				\hat{\y}^{i+1} = (\matI_{m+n-1}-\rho\diag(\vecalpha))^{-1}(\y + \rho\b),
+			\end{equation}
+			con $\vecalpha = [\alpha_1,\alpha_2,\ldots,\alpha_{m+n-2}]^T$ donde cada componente es la cantidad de elementos que hay en las antidigonales de la matriz de Hankel.
+	
+			\item[c)] Finalmente actualizamos $\Lambdab$ de la siguiente forma
+				\begin{equation}
+					\Lambdab^{i+1} = \Lambda^i + \rho(\matA^{i+1}-\Hank_{\hat{\y}^{i+1}}).
+					\label{Eq:Andersson7}
+				\end{equation}
+		\end{itemize}
+
+		El pseudocódigo de este procedimiento se describe en el Algoritmo \eqref{Algorithm_Andersson}. En \cite{Andersson2014} se toma $\rho = 0.025$ y se itera unas 200 veces. 
+
+		\begin{algorithm}
+			\caption{Pseudo-código para el algoritmo en \cite{Andersson2014}}
+			\begin{algorithmic}[1]
+				\State{\textbf{Entradas}: Señal ruidosa $\y\in\C^{m+n-1}$, rango de la matriz de Hankel $r$ y parámetro de regularización $\rho$.}
+				\State{\textbf{Salidas}: reconstrucción de $\x$ a partir de $\y$.}
+				\State{Inicializar $\Lambdab$, $i$}
+				\While{$i<200$}
+					\State{Actualizar $\matA^{i+1}$ resolviendo \eqref{Eq:Andersson5}.}
+					\State{Actualizar $\y^{i+1}$ resolviendo \eqref{Eq:Andersson6}.}
+					\State{Actualizar $\Lambdab^{i+1}$ resolviendo \eqref{Eq:Andersson7}.}
+					\State{$i = i + 1$.}
+				\EndWhile	
+			\end{algorithmic}
+			\label{Algorithm_Andersson}
+		\end{algorithm} 
+
+		El objetivo de este procedimiento, es siempre obtener una secuencia aproximada $\hat{\y}$ y su matriz de Hankel asociada $\matA = \Hank_{\hat{\y}}$. Luego, para estimar los $z_i$, $i=1,\ldots,r$ se pueden usar los Algoritmos \eqref{Algorithm_esprit} o \eqref{Algorithm_MPM} como un segundo paso.
+
+        \subsection{Envolvente Convexa para aproximación de bajo rango.}
+		%Sin embargo, el problema \eqref{Eq:Adenrsson2} sigue siendo un problema no-convexo. 
+		Para una función costo convexa, se garantiza que el ADMM convergerá hacia la solución única. Para problemas no convexos, el algoritmo puede converger a mínimos locales. aunque en la práctica puede funcionar bien \cite{Boyd2011, Andersson2014}. Sin embargo, dado que la restricción de rango $\chi_{\setC_{(r)}}$ no es convexa, la convergencia del esquema ADMM asociado con \eqref{Eq:Adenrsson2} no está garantizada.
+		
+  		
+  		Una alternativa  es calcular la envolvente convexa de la función costo de manera de obtener una formulación convexa. Para obtener la envolvente convexa es necesario obtener primero la  conjugada convexa de una función, es decir
+        \begin{definition}
+            Para una función $f:\C^n\times\R\cup\{\infty\}$, la función conjugada es 
+            \begin{equation}
+                f^*(x^*) = \sup_{x}\big[\langle x,x^*\rangle - f(x)\big].
+                \label{eq:convex}
+            \end{equation}
+        \end{definition}
+        La conjugada convexa de una función siempre es semicontinua inferior. El biconjugado $f^{**}(\cdot)$ (la conjugada convexa de la conjugada convexa) es la envolvente compleja, es decir, es una función convexa semicontinua inferior más grande tal que $f^{**}\le f$. \cite{Boyd2011}
+        
+        Un enfoque posible se obtiene al relajar la restricción sobre el rango por su envolvente compleja dada por la norma nuclear \cite{Fazel2001,Recht2010}.	
+        \begin{equation}
+        	\min_{\matH\in\Hank} \|\Hank_{\y}-\matH\|_F + \mu\|\matH\|_*,
+        	\label{Eq:minNuclear}
+        \end{equation}
+        donde $\mu\in\R_{\geq 0}$. La idea es penalizar la suma de valores singulares para setear a cero varios de ellos. Sin embargo, la elección del valor de $\mu$ suele ser un desafío. Por un lado elegir un $\mu$ muy grande podría dar como resultado una matriz con un rango más pequeño que el deseado, mientras que un $\mu$ pequeño puede resultar en un rango grande.
+        
+        En \cite{Grussler2018}, el problema \eqref{Prob:1} se reformula como
+        \begin{equation}
+            \min_{\matH} \|\Hank_{\tilde{\y}}-\matH\| + \chi_{\setC_{(r)}}(\matH) + \chi_{\Hank}(\matH),
+            \label{eq:Grussler1}
+        \end{equation}
+        donde se agrega otro función indicadora para el espacio de matrices con estructura Hankel. Introduciendo la siguiente notación
+        \begin{equation}
+            \begin{aligned}
+                & f(\matH) = \|\Hank_{\tilde{\y}}-\matH\| + \chi_{\setC_{(r)}}(\matH)\\[0.3em]
+                & g(\matH) =  \chi_{\Hank}(\matH),
+            \end{aligned}
+            \label{eq:Grussler2}
+        \end{equation}
+        la envolvente convexa viene dada por la función biconjugada. La función conjugada es,
+        \begin{equation}
+            f^*(\matX) = \bigg\|\frac{1}{2}\matX+\Hank_{\tilde{\y}}\bigg\|_r^2 + \|\Hank_{\tilde{\y}}\|_F^2,
+            \label{eq:Grussler3}
+        \end{equation}
+        donde la norma $\|\cdot\|_r^2$ se define como
+        \begin{equation}
+            \|\matX\|_r^2 = \sum_{i=1}^r\sigma_i^2
+            \label{eq_Grussler4}
+        \end{equation}
+        con $\sigma_i$ los valores singulares de la matriz $\matX$.
+        Luego, la función biconjugada es
+        \begin{equation}
+            f^{**}(\matH) = \|\matH\|_{r*}^2 -2\langle \Hank_{\tilde{\y}},\matH\rangle + \|\Hank_{\tilde{\y}}\|_F^2,
+            \label{eq:Grussler5}
+        \end{equation}
+        donde $\|\cdot\|_{r*}$ es la función dual de $\|\cdot\|_r$.
+        Con esta formulación se obtiene que
+        \begin{equation}
+            \min_{\matH} f(\matH) + g(\matH) \subset \min_{\matH} f^{**}(\matH) + g(\matH)
+            \label{eq:Grussler6}
+        \end{equation}
+        Ahora,  De la misma forma que \eqref{Eq:Adenrsson2}, para resolver el problema
+        \begin{equation}
+            \min_{\matH} f^{**}(\matH) + g(\matH).
+            \label{eq:Grussler7}
+        \end{equation}
+        Para minimizar \eqref{eq:Grussler7} se usa el algoritmo de Douglas-Ratchford \cite{Parikh2014}. Este algoritmo utiliza una estrategia iterativa de la siguiente forma
+        \begin{itemize}
+            \item[a)] Se obtiene una matriz $\matH$ resolviendo la siguiente estrategia de optimización
+            \begin{equation}
+                \begin{aligned}
+                    \matH^{i+1} & = \argmin_{\matH} f^{**}(\matH) + \frac{1}{2}\|\matH-\Lambdab^i\| \\[0.3em]
+                    & = \argmin_{\matH} \|\matH\|_{r*}^2 - 2\langle\Hank_{\tilde{\y}},\matH\rangle + \|\Hank_{\tilde{\y}}\|_F^2 + \frac{1}{2}\|\matH-\Lambdab^{i}\|_F^2 \\[0.3em]
+                    & = \argmin_{\matH} \frac{1}{2}\|\matH\|_{r*}^2 + \frac{1}{2}\|\matH - (\Hank_{\tilde{\y}}+\Lambdab^{i})\|_F^2 + \langle \Lambdab^{i},\Hank_{\tilde{\y}}\rangle \\[0.3em]
+                    & = \Hank_{\tilde{\y}} + \Lambdab^{i}-\argmin_{\matH} \|\matH\|_r^2 + \frac{1}{2}\|\matH-\Hank_{\tilde{\y}}-\Lambdab^{i}\|
+                \end{aligned}
+                \label{eq:Grussler8}
+            \end{equation}
+            donde en la último igualdad se uso la descomposición de Moreau \cite{Parikh2014}.
+            Luego, se obtiene que \cite{Grussler2021}
+            \begin{equation}
+                \matH^{i+1} = \frac{1}{2}\svd_r(\Hank_{\tilde{\y}}+\Lambdab^{i})
+            \end{equation}
+            \item[b)] Luego, se busca minimizar la siguiente función
+            \begin{equation}
+                \begin{aligned}
+                    \matZ^{i+1} & = \argmin_{\matZ} g(\matZ) + \frac{1}{2}\|\matZ - \matH^{k+1}+\Lambdab^{k}\|_F^2\\[0.3em]
+                    & = \argmin_{\matZ} \chi_{\Hank}(\matZ) + \frac{1}{2}\|\matZ - \matH^{k+1}+\Lambdab^{k}\|_F^2\\[0.3em]
+                    & = \argmin_{\matZ\in\Hank} \frac{1}{2}\|\matZ - \matH^{i+1}+\Lambdab^{i}\|_F^2.
+                \end{aligned}
+                \label{eq:Grussler9}
+            \end{equation}
+            La solución a este problema es la proyección de $\matH^{i+1}+\Lambdab^{i}$ sobre el espacio de las matrices con estructura Hankel.
+            \item[c)] Finalmente se actualiza la matriz $\Lambdab$ de la siguiente forma
+            \begin{equation}
+                \Lambdab^{i+1} = \Lambdab^{i} + \rho(\matH^{i+1}-\matZ^{i+1})
+                \label{eq:Grussler10}
+            \end{equation}
+        \end{itemize}
+        
+        Este procedimiento se describe en el pseudocódigo del Algoritmo \eqref{Algorithm_Grussler}.
+        
+		\begin{algorithm}
+			\caption{Pseudo-código para el algoritmo en \cite{Grussler2018}}
+			\begin{algorithmic}[1]
+				\State{\textbf{Entradas}: Matriz Hankel $\Hank_{\y}$, rango $r$, parámetro de regularización $\rho$ y tolerancia $\tau$.}
+				\State{\textbf{Salidas}: Matriz $\matH$ con estructura Hankel y rango $r$.}
+				\State{Inicializar $\Lambdab$, $i$}
+				\While{$\|\matH^i-\matZ^i\|_F>\tau$}
+					\State{Actualizar $\matH^{i+1}$ resolviendo \eqref{eq:Grussler8}.}
+					\State{Actualizar $\matZ^{i+1}$ resolviendo \eqref{eq:Grussler9}.}
+					\State{Actualizar $\Lambdab^{i+1}$ resolviendo \eqref{eq:Grussler10}.}
+					\State{$i = i + 1$.}
+				\EndWhile	
+			\end{algorithmic}
+			\label{Algorithm_Grussler}
+		\end{algorithm} 
+		
+	\subsection{Ejemplo}
+		En esta sección se analizará el rendimiento de los diferentes algoritmos descritos anteriormente para resolver el problema \eqref{Prob:minCadzow}. Para ello, se considera el siguiente modelo  de señal
+		\begin{equation}
+			y_k = \sum_{i=1}^{r}c_iz_i^k + w_k, \quad k = 0,1,\ldots, K-1
+			\label{eq:1}
+		\end{equation}
+		donde $z_i = e^{2\pi(\gamma_i+\jmath\nu_i)T_s}$, con $T_s = 3.9mseg$ tiempo de muestreo y $K = 257$. Los valores de los parámetros del modelo exponencial \eqref{eq:1} se definen en la tabla \eqref{Tab:eq1}
+	\begin{table}[t]
+		\centering
+		\begin{tabular}{lllll}
+			$i$          & 1      & 2      & 3     & 4      \\ \hline 
+			$\nu_i$      & -7.68  & 39.68  & 40.96 & 99.84  \\ 
+			$\gamma_i$   & -0.274 & -0.150 & 0.133 & -0.221 \\ 
+			$|c_i|$      & 0.4    & 1.2    & 1.0   & 0.9    \\ 
+			$\angle c_i$ & -0.93  & -1.55  & -0.83 & 0.07   \\ 
+			\hline
+		\end{tabular}
+	\caption{Parámetros para el modelo exponencial}
+	\label{Tab:eq1}
+	\end{table}
+
+	Para diferentes relaciones señales a ruido (SNR) se estimará una matriz, $\matH$, a partir de la matriz de Hankel $\Hank_{\y}$ variando el rango deseado. Para evaluar cada algoritmo, se repite la estimación $K$ veces y se calcula el error $\|\Hank_{\x}-\matF\|_F$. 
+	
+	Para $K=200$ se calcular el error promedio para valores de $SNR$ iguales a $0$dB, $10$dB, $20$dB. Los resultados se muestran en la figura \ref{Fig:comparacion_algoritmo}. Para $SNR$ de $10$dB y $20$dB se observa que el error es mínimo cuando el rango de la matriz $\matH$ es igual a la cantidad de exponenciales del modelo para todos los algoritmos. Sin embargo, para el caso de $SNR=0dB$,  el algoritmo \eqref{Algorithm_Andersson} el mínimo error se obtiene cuando el rango es 4 o 5. Mientras que para los otros algoritmos el error mínimo se observa cuando $\rank(\matH)=4$.
+
+ %usando el algoritmo \eqref{Algorithm_Cadzow}, algoritmo \eqref{Algorithm_Andersson} algoritmo \eqref{Algorithm_Grussler}. 
+
+		\begin{figure}[h!]
+			\centering
+			\begin{subfigure}[b]{0.3\textwidth} 
+				%\centering
+				%\includegraphics[width = \linewidth]{Figuras/comparacion_denoisy_algorithm_0dB}
+				\resizebox{\linewidth}{!}{\input{Figuras/comparacion_denoisy_algorithm_0dB.pgf}}
+				\caption{SNR = 0dB.}
+				\label{fig:comparacion_algoritmo_snr0}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.3\textwidth}
+				%\centering 
+				%\includegraphics[width = \linewidth]{Figuras/comparacion_denoisy_algorithm_10dB}
+				\resizebox{\linewidth}{!}{\input{Figuras/comparacion_denoisy_algorithm_10dB.pgf}}
+				\caption{SNR = 10dB.}
+				\label{fig:comparacion_algoritmo_snr10}
+			\end{subfigure}
+			\begin{subfigure}[b]{0.3\textwidth} 
+				%\centering
+				%\includegraphics[width = \linewidth]{Figuras/comparacion_denoisy_algorithm_20dB}
+				\resizebox{\linewidth}{!}{\input{Figuras/comparacion_denoisy_algorithm_20dB.pgf}}
+				\caption{SNR = 20dB.}
+				\label{fig:comparacion_algoritmo_snr20}
+			\end{subfigure}
+			\caption{Error de aproximación para diferentes ordenes y relaciones señal a ruido.}
+			\label{Fig:comparacion_algoritmo}
+		\end{figure}
+		
+		
+		
+		%`Fig.~\ref{Fig:6} shows the estimation of the complex frequencies for orders between $1$ and $9$. In this case the two methods have similar performance.
+		
+	
+			
+	\section{Estabilidad Numérica}\label{sec:EstNum1}
+	
+		La sensibilidad de la estimación de los autovalores con respecto a la perturbación en la señal se puede calcular a partir del problema del haz matricial. En \cite{Golub1999, Beckermann2007} se estudia este problema considerando la secuencia $\x = \big[x_0,\ x_1,\ \cdots,\ x_{2r-1} \big]$. A partir de esta secuencia, se plantea el problemas de autovalores generalizados $\Hank_{\x,f}\v = z\Hank_{\x,l}\v$, con $\Hank_{\x,f},\Hank_{\x,l}\in\C^{r\times r}$.
+		
+		Considere un autovalor simple del haz matricial, se puede escribe el problema de perturbación como 
+		\begin{equation}
+			(\Hank_{\x,f}+\epsilon\matF)(\v + \epsilon\dot{\v}+\cdots) = (z+\epsilon\dot{z}+\cdots)(\Hank_{\x,l}+\epsilon\matE)(\v + \epsilon\dot{\v}+\cdots),
+			\label{Eq:eps_Perturbation}
+		\end{equation}
+		donde $\matF$ y $\matE$ son dos matrices de perturbación, $\epsilon\in\R$ y $\dot{\v}$ y $\dot{z}$ son las aproximaciones de primer orden. Por lo tanto, reteniendo solo los términos de primer orden, se obtiene
+		\begin{equation}
+				(\Hank_{\x,f}-z\Hank_{\x,l})\dot{\v} = (\dot{z}\Hank_{\x,l} + z\matE - \matF)\v, 
+			\label{Eq:eps_Perturbation_1erOrden}
+		\end{equation}
+		se desea encontrar una expresión para $\cdot{z}$ que mida la sensibilidad de primer orden. A continuación se multiplica \eqref{Eq:eps_Perturbation_1erOrden} a la izquierda por el autovector (izquierdo) $\v$ (que en este caso coincide con el autovector derecho, ya que $\Hank_{\x,l}$ y $\Hank_{\x,f}$ son matrices cuadradas simétricas complejas). Esta acción anula el lado izquierdo de \eqref{Eq:eps_Perturbation_1erOrden}, y después de simplificar se obtiene
+		\begin{equation}
+			\dot{z} = \frac{\v^H(\matF - z\matG)\v}{|\v^H\Hank_{\x,l}\v|}
+			\label{Eq:firstOrderPerturbation}
+		\end{equation}
+	
+		En \cite{Golub1999} se asume que tanto $\matF$ como $\matE$ no tiene estructura Hankel y además $\|\matF\|_2 = \|\Hank_{\x,f}\|_2$ y $\|\matE\|_2 = \|\Hank_{\x,l}\|_2$, obteniéndose
+		\begin{equation}
+			|\dot{z}_i| \le \frac{\|\Hank_{\x,f}\|_2 + |z_i|\|\Hank_{\x,l}\|_2}{|\v^H\Hank_{\x,l}\v|}
+			\label{Eq:firstOrderPerturbation2}
+		\end{equation}
+		El término importante en \eqref{Eq:firstOrderPerturbation2} es el denominador; cuando este es pequeño, se dice que el autovalor está mal condicionado. También lo sera, si la matrices de Hankel están mal condicionadas.
+		
+		Por otro lado, en \cite{Beckermann2007}, se obtiene otro cota superior restringiendo las matrices $\matF$ y $\matE$ a tener estructura Hankel y$\|\matF\|_2, \|\matE\|_2<1$  . De esta forma se obtiene,
+		\begin{equation}
+			|\dot{z}_i| \le \frac{(1 + |z_i|)\|\matZ_{r-1}^{-1}\e_i\|_2}{|c_i|}.
+			\label{Eq:firstOrderPerturbation3}
+		\end{equation}
+		Para este caso, el autovalor estará mal condicionado cuando $|c_i|$ es pequeño, o cuando la matriz de Vandermonde está mal condicionada.
+		
+		En la capítulo \ref{chap:EstabilidadNumerica} se extenderán estos resultados para problemas de autovalores generalizados con matrices Hankel rectangulares asociadas a secuencias $\x = \big[x_0,\ x_1,\ \cdots,\ x_{N-1} \big]$ para $N>2r$. Se demostrará que la aproximación de primer orden para el autovalor será inversamente proporcional a la energía asociado a ese autovalor, pero también será inversamente proporcional a la distancia con la que se encuentran los autovalores entre sí.
+
+	
+	
+	
+	
+	
+		
+	\newpage
+	\section{Apéndice}
+	%\addcontentsline{toc}{section}{\bfseries Apéndices}
+	%\renewcommand{\thesubsection}{\arabic{subsection}}
+	%\setcounter{subsection}{0}
+    \subsection{Algoritmo Douglas-Rachford}
+
+        El algoritmo de descomposición de Douglas-Rachford (DR) es un enfoque iterativo para resolver problemas de optimización convexa mediante la descomposición de la función objetivo en componentes convexas y la aplicación de operadores de proximidad para actualizar las variables de manera iterativa. Es una técnica versátil utilizada en diversos campos donde se aplica la optimización convexa y ha encontrada aplicaciones en procesamiento de señales, reconstrucción automático y más.
+
+        El algoritmo DR se utiliza para resolver problemas de optimización  de la siguiente forma
+         \begin{equation}
+            \min_{\x} = f(\x) + g(\x)
+            \label{eq:DR1}
+        \end{equation}
+        donde $f(\x)$ y $g(\x)$ son funciones convexas, pero no necesariamente suaves o diferenciables. El algoritmo avanza a través de las siguiente iteraciones 
+        \begin{equation}
+            \begin{aligned} 
+                & \x^{k+1} = \argmin_{\x} \big[f(\x) - \frac{1}{2}\|\x-\veclambda^k\|_2^2\big]\\[0.3em]
+                & \z^{k+1} = \argmin_{\z} \big[g(\z) + \frac{1}{2}\|\z - \x^{k+1}+\veclambda^{k}\|_2^2\big]\\[0.3em]
+                & \veclambda^{k+1} = \veclambda^{k} + \rho (\z^{k+1}-\x^{k+1}).
+            \end{aligned}
+            \label{Eq:DR2}
+        \end{equation}
+        para cada iteración $\x^{k+1}$ y $\z^{k+1}$ representan la proyección del punto sobre el conjunto definido por la función. Éstos se conocen como operadores de proximidad. El parámetro $\rho$ se conoce como tamaño de paso del algoritmo.
+
+        El algoritmo continúa iterando hasta que se cumplan los criterios de convergencia. La convergencia se puede evaluar verificando si la diferencia entre los iterados consecutivos cae por debajo de un umbral predefinido o mediante el seguimiento de la brecha primal-dual, es decir la diferencia entre el valor de la función objetivo en la solución óptima del problema primal y el valor de función objetivo en la solución óptima del problema dual.
+
+        La elección del tamaño de paso y los criterios de detención pueden afectar la convergencia y eficiencia del algoritmo y pueden requerir ajustes.
+
+	\subsection{Método de multiplicadores de Lagrange con direcciones alternadas (ADMM)}\label{App:ADMM}
+	
+	El método de multiplicadores con direcciones alternadas o ADMM (\emph{Alternating Direction Method od Multipliers}) \cite{Boyd2011} es un algoritmo desarrollado para problemas en optimización convexa, especialmente aquellos con función objetivo y restricciones separables. Es de hecho una instancia especial del algoritmo de descomposición de Douglas-Rachford. Toma un enfoque de \emph{dividir y conquistar} donde las soluciones a subproblemas locales se coordinan para encontrar un solución al problema global. ADMM presenta las ventajas de los métodos de descomposición dual y del Lagrangiano aumentado para problemas de optimización con restricciones \cite{Parikh2014}. 
+    En particular, se usa para resolver problemas tales como
+	\begin{equation}
+		\begin{aligned} 
+			& \min_{\x,\z}\quad f(\x) + g(\z), \\[0.3em]
+			& \text{sujeto a}\quad \x = \z
+		\end{aligned}
+		\label{eq:dr1}
+	\end{equation}
+	con $f(\cdot)$ y $g(\cdot)$ funciones convexas, $\x=\z$ representa restricciones de igualdad lineal.
+	
+	El ADMM se puede ver como una versión mejorada del método de multiplicadores en el caso donde la función objetivo es separable. El Lagrangiano aumentado asociado con \eqref{eq:dr1} es la función 
+	\begin{equation}
+		\L(\x,\z,\veclambda) = f(\x) + g(\z) +\langle\veclambda,\x-\z\rangle + \frac{\rho}{2}\|\x-\z\|^2_2,
+		\label{eq:dr2}
+	\end{equation}
+	donde $\rho\ge 0$ es un parámetro de penalidad y $\veclambda$ es el multiplicador de Lagrange. Usando el método de multiplicadores se resuelve el problema \eqref{eq:dr1} minimizando iterativamente $\L(\x,\y,\veclambda)$ sobre las variables $\x$ e $\y$ mientras se actualiza el multiplicador de Lagrange $\veclambda$ (conocido como variable dual). Sin embargo, esto requiere minimizar el Lagrangiano conjuntamente en $\x$ e $\y$. Para evitar esta situación, el ADMM aprovecha la separabilidad de la función objetivo y divide el procedimiento de minimización en dos pasos separados, uno para cada variable.  Específicamente, reescribiendo el Lagrangiano como
+	\begin{equation}
+		\L(\x,\z,\veclambda) = f(\x) + g(\z) +\frac{1}{2}\|\x-\z+\veclambda\|_2^2 - \frac{1}{2}\|\veclambda\|_2^2
+		\label{eq:dr4}
+	\end{equation}
+	y tomando un $\rho \ge 0$, el paso iterativo para resolver ADMM para resolver \eqref{eq:dr1} es
+	\begin{equation}
+		\begin{aligned}
+			& \x^{k+1} = \arg\min_{\x}\L(\x,\veclambda^k,\z^k) = \arg\min_{\x} f(\x) + \frac{1}{2}\|\x - \z^k + \veclambda^k\|_2^2 \\[0.3em]
+			& \z^{k+1} = \arg\min_{\z}\L(\x^{k+1},\veclambda^k,\z) = \arg\min_{\z} g(\z) + \frac{1}{2}\|\z - \x^{k+1}-\veclambda^k\|_2^2 \\[0.3em]
+			& \veclambda^{k+1} = \arg\min_{x}\L(\x^{k+1},\veclambda,\z^{k+1}) = \veclambda^k + \x^{k+1}-\z^{k+1}. \\[0.3em]
+		\end{aligned}
+		\label{eq:dr5}
+	\end{equation}
+	
+	Aunque esto no es equivalente a la minimización exacta, la convergencia de este esquema está bien establecida en el caso de que $f(\cdot)$ y $g(\cdot$) sean convexas \cite{Parikh2014}.
+
+    ADMM se puede aplicar a una amplia gama de problemas de optimización y ha encontrado aplicaciones en aprendizaje automático, procesamiento de señales, reconstrucción de imágenes y más. Es un algoritmo versátil y poderoso para resolver problemas de optimización convexa de manera eficiente.
+	
+	
+	
