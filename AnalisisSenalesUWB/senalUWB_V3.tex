@@ -1,0 +1,257 @@
+\chapter{Análisis de señales de radar UWB}\label{chap:sinalUWB}
+
+%\section{Introducción}
+
+Cuando una onda electromagnética monocromática que se propaga por cierto medio encuentra un obstáculo, se produce una interacción que dependerá de la forma, posición y orientación del objeto, y de sus propiedades eléctricas. De acuerdo a la teoría de propagación de Maxwell, si el material es lineal y no magnético, como muchos casos de interés, dichas propiedades dieléctricas serán representadas por la permitividad dieléctrica del material. En objetos no homogéneos dicha constante tendrá una dependencia espacial y será una función de los materiales que lo componen. Esto implica que es posible extraer información acerca de la composición de un objeto o blanco, así como también sobre su forma, posición, etc., a partir del análisis de su interacción con una onda electromagnética. Los modelos matemáticos \cite{Baum1971} describen esta interacción entre el pulso enviado y el blanco a partir de una suma de exponenciales complejas, lo que resulta una motivación usar los métodos descriptos en esta tesis para la identificación de diferentes objetos. Además, este problema es de interés en numerosos ámbitos; por ejemplo, en aplicaciones industriales y alimenticias, para el monitoreo no invasivo de la calidad de productos y alimentos \cite{Meng2018}. También en la agricultura, un estudio preciso de las propiedades del suelo de cultivo tiene particular incidencia en el desempeño general de un sistema de cultivo. Asimismo, en obras civiles puede monitorearse el estado de estructuras de diversos materiales, o imperfecciones constructivas como inhomogeneidades \cite{WAILOKLAI2018}. 
+
+Si la onda electromagnética posee un ancho de banda grande, es decir, utiliza una gran cantidad de frecuencias y además sus longitudes de onda son comparables con las dimensiones del objeto, la respuesta del blanco será mucho más rica, pues en la interacción del blanco con la onda se genera una respuesta del tipo resonante por parte del objeto, permitiendo la extracción de una mayor cantidad de información sobre el blanco iluminado. Esto implica que las señales de ancho de banda ultra-grande o UWB (Ultra WideBand), que son aquellas señales cuyo ancho de banda superior a 500 MHz o cuyo ancho de banda relativo es mayor a 20\%, pueden brindar una herramienta interesante al problema de caracterización de blancos. Hacia fines de la década del 90, los sistemas UWB se utilizaban en el diseño de sistema de comunicación y también de radares y sensores de corto alcance \cite{Cuomo1999, Taylor1995}. En los últimos años, UWB es considerada una tecnología ideal para el diseño de sensores de alta resolución capaces de identificar y/o clasificación de blancos ocultos de pequeño tamaño. El radar UWB utiliza pulsos de muy corta duración (inferior a los 3ns), que dan como resultado una banda muy amplia en el dominio de la frecuencia. Estas señales pueden ser transmitidas de forma inalámbrica, dando lugar a un sistema de inspección sin contacto. Éste es el principio de funcionamiento de ciertos sensores que permiten analizar la composición de materiales de modo no destructivo, lo que resulta atractivo en muchas aplicaciones de interés práctico, como las mencionadas previamente. 
+
+
+
+\section{Problema general de la dispersión electromagnética de un objeto}
+
+Dado un objeto de un tamaño, forma y propiedades electromagnéticas específicas, es iluminado por una onda electromagnética con cierta polarización. El fenómeno de dispersión  ocurre cuando una onda electromagnética golpea un objeto pequeño. El campo eléctrico que se propaga en nuevas direcciones diferentes a la incidente se conoce como el campo disperso. El método de expansión en singularidades, SEM (\emph{Singularity Expansion Method}) \cite{Baum1971}, surge de los intentos de resolver el problema de radiación en el dominio del tiempo. Los modelos matemáticos para describir este proceso suelen ser muy complejos, ya requieren la solución de las ecuaciones de Maxwell. Para simplificar, se considera la ecuación de onda escalar
+\begin{equation}
+	\begin{aligned} 
+		& \partial_{tt}\psi(\r,t) - \nabla^2\psi(\r,t) = 0, \quad \r\in\partial \setS\\[0.3em]
+		& \psi(\r,0) = 0,\quad \partial_t\psi(\r,0) = E(\r),\\
+	\end{aligned}
+	\label{Eq:waveEquation}
+\end{equation}
+donde $\setS\subseteq\R^3$ es la superficie del objeto y $\delta \setS$ es su frontera. La función $E(\r)$ con $\r\in\delta \setS$ es el campo eléctrico incidente, y $\psi(\r,t)$ es la respuesta espacio-tiempo en la región $\setS$. En el dominio de la frecuencia se obtiene la ecuación de Helmholtz.	
+
+\begin{equation}
+	(-\nabla^2 + \omega^2)G(\r-\r';-\omega^2) = \delta(\r-\r'), \quad r\in \setS,
+	\label{Eq:HelmholtzEquation}
+\end{equation}
+donde $G(\r-\r';-\omega^2)$ es la función de Green en el dominio de la frecuencia. Transformando este problema al dominio de Laplace vía $s=\jmath\omega$, la solución a \eqref{Eq:waveEquation} está dada por
+
+\begin{equation}
+	\psi(\r,t) = \frac{1}{2\pi\jmath}\int_{c-\jmath\infty}^{c+\jmath\infty}\psi(\r,s)e^{st}\mathrm{d}s,
+	\label{Eq:LaplaceDomain}
+\end{equation}
+donde 
+\begin{equation}
+	\psi(\r,s) = \int_{\setS} G(\r-\r';-s^2)E(\r')\mathrm{d}\r'.
+	\label{Eq:VolumeIntegral}
+\end{equation}
+Notar que $\psi(\r,s)$ in \eqref{Eq:VolumeIntegral} está expresado como una integral de ''convolución'' % is expressed as a ''convolution type" integral.
+
+\begin{figure}[t]
+	\centering
+	\resizebox{\linewidth}{!}{\input{Diagramas/sem_figure.tex}}
+	\caption{Método de expansión en singularidades}
+	\label{Fig:SEM}	
+\end{figure}
+
+
+Luego, la transformada de Laplace inversa en \eqref{Eq:LaplaceDomain}  se resuelve como una integración de contorno en el plano complejo. Usando la continuación analítica y el teorema del residuo, la solución general de \eqref{Eq:waveEquation} se puede expandir como
+
+\begin{equation}
+	\phi(\r,t) = \sum_{i=1}^{\infty}c_i(\r)e^{s_it} + e_N(\r,t),
+	\label{Eq:SEMtime}
+\end{equation}
+donde $s_n$, $n=1,2,\ldots,r$ son los polos complejos de $G(\r-\r';-s^2)$. La función $e_N(\r,t)$ es una función error que mide la desviación de la suma sobre $n$ desde el campo verdadero $\phi(\r,t)$. En el dominio de la frecuencia, $e_N(\r,t)$ es una función entera en el plano $s$.
+
+De \eqref{Eq:SEMtime} la respuesta de un objeto excitado por una onda electromagnética se compone de dos partes sucesivas como se muestra en la Figura~\ref{Fig:SEM}. La función $e_N(\r,t)$ se puede interpretar con la respuesta temprana (\emph{early time}) del blanco y se debe principalmente a las reflexiones directas de la onda incidente sobre la superficie del objeto. La segunda parte, se conoce como respuesta tardía (\emph{late Time}) y se debe a la radiación de las corrientes inducidas sobre la superficie del objeto y  por las ondas internas que experimentan múltiples reflexiones. Esta respuesta se describe como una suma de exponenciales complejas, donde las frecuencias resonantes o modos naturales son soluciones del problema de ''oscilación libre''. La distribución de estos modos en el plano complejo no es función de las propiedades del campo incidente, sino que dependen del tamaño, forma y propiedades eléctricas del objeto iluminado. Sin embargo, la energía asociada a estos modos son dependientes del campo incidente. Por lo tanto, surge una dificultad importante a la hora de separar las respuestas temprana y tardía debido a que no existe un criterio teórico que dicha separación pueda realizarse a priori. Sin embargo, debido a que la duración de la respuesta temprana es finta y depende del tiempo en que el pulso incidente tarda en recorrer el objeto iluminado, se puede estimar este tiempo como comienzo de la respuesta tardía. Por lo tanto, para este último caso, SEM permite modelar la respuesta de tiempo tardío como
+\begin{equation}
+	x(t) = \sum_{i=1}^{\infty}c_ie^{s_it} \quad t> T_L
+	\label{Eq:SEM_LateTime}
+\end{equation}
+donde $T_L$ es la estimación del inicio de la respuesta tardía. 
+
+Por lo tanto, existe un conjunto único de resonancias o modos naturales para cada objeto, que puede ser adecuado para la identificación o clasificación de distintos objetivos. En el contexto de radares, SEM hace posible obtener un conjunto de polos y residuos para cada objetivo. Esto es particularmente interesante en los casos de sistemas cuya banda de frecuencia útil es grande. 
+
+
+ \subsection{Modos naturales}
+
+Los modos naturales están asociados a las propiedades de resonancia del objeto. En particular, las resonancias se dividen en dos clases. Las resonancias internas provienen de las múltiples reflexiones en el interior del objeto. Por otro lado, se tienen las resonancias externas que son causas por las corrientes que interactúan en la superficie del objeto. Los modos naturales suelen ser números complejos, con parte real e imaginaria relacionada con un factor de amortiguamiento y una frecuencia de resonancia respectivamente.
+
+Para objetos perfectamente conductores (PEC) todos los modos naturales son externos, ya que ninguna forma de onda puede penetrar el material. Las resonancias externas son el resultado de corrientes que se generan en la superficie del objeto, por lo que dependen en gran medida de la geometría y las propiedades del medio y son bastante insensibles a las propiedades internas del objeto.
+\begin{figure}[t]
+	\centering 
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\resizebox{\linewidth}{!}{\input{Figuras/TE_modes.pgf}}
+		\caption{Modos Transversales Eléctricos (TE).}
+		\label{Fig:ModesTE}
+	\end{subfigure}
+	~
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\resizebox{\linewidth}{!}{\input{Figuras/TM_modes.pgf}}
+		\caption{Modos Transversales Magnéticos (TM).}
+		\label{Fig:ModesTM}
+	\end{subfigure}
+	\caption{Modos naturales de la esfera PEC y dieléctrica.}
+	\label{Fig:Modes}
+\end{figure} 
+
+Por el contrario, para materiales dieléctricos, además de presentar resonancias externas, presentan resonancias internas que son independientes del medio circundante y están determinadas por las características internas del objeto. 
+
+En la Figura~\ref{Fig:Modes} se muestran los modos Transversales eléctricos (no existe ninguna componente del campo eléctrico en la dirección de propagación) y los modos transversales magnéticos (no existe ninguna componente del campo magnético en la dirección de propagación) para los casos de una esfera PEC y una esfera dieléctrica con permeabilidad relativa $\varepsilon_r = 4.2-\jmath 0.01$. Estos modos se pueden hallar mediante la solución de Mie \cite{Stratton1941}.
+
+Como las resonancias externas son sensibles a la geometría del objeto y las propiedades del medio, para una esfera dieléctrica son bastante similares a las correspondientes a una esfera de las mismas dimensiones hechas de un material perfectamente conductor. Esta observación también hace que las resonancias externas no sean adecuadas para una clasificación precisa de distintos materiales de igual dimensión. Por el contrario, los modos internos son independientes del medio circundante y están determinadas por las características internas de la esfera. En comparación con las resonancias externas, las resonancias internas muestran pequeñas partes reales, haciéndolas cercanas al eje imaginario.
+
+Un parámetro importante para los métodos de clasificación o identificación basados en las resonancias naturales es el tiempo de encendido, es decir, el instante en que se extingue la componente de tiempo temprano y comienza la respuesta de tiempo tardío. En este momento, la respuesta al impulso se puede representar mediante una serie de exponenciales amortiguadas como en \eqref{Eq:SEM_LateTime}. Sin embargo, como ya fue mencionado, no es posible una separación clara entre ambos componentes \cite{Pearson1982}. Además, la energía asociada a cada modo depende de la onda incidente, es decir, un mismo modo puede tener más o menos energía de acuerdo al ángulo de arribo de la onda incidente con respecto al blanco. Como consecuencia, la cantidad de modos que aparecerán en la señal medida puede variar de acuerdo al ángulo con que interactúa el blanco con el campo incidente. Por lo tanto, la estimación de la cantidad de modos (orden del modelo) es un paso clave a la ahora de querer realizar la identificación o clasificación de un blanco. 
+
+Otro problema que se observa es que los modos se encuentran muy cerca entre sí. Uno de los enfoques de este trabajo es analizar el comportamiento de los algoritmos de estimación de frecuencias cuando los datos observados están sujetos a pequeñas perturbaciones. 
+
+\section{Datos Sintéticos}
+
+
+Para el caso de una esfera, existe una solución analítica utilizando la serie de Mie \cite{Harrington2001}. La banda de frecuencias se mantiene de 10 MHz a 5 GHz con un paso de 10 MHz. Esta frecuencia baja permitirá calcular resonancias de objetos grandes.De hecho, el ancho de banda permite caracterizar objetos cuyo tamaño varía desde un centímetro hasta varios decímetros. La esfera PEC tiene un diámetro de $0.15$ metros. Se ilumina mediante una onda electromagnética plana como se muestra en la fig.~\ref{}. El vector de onda incidente $\k_{inc}$ se define de la siguiente manera: 
+
+\begin{figure}[t]
+	\centering
+	\input{Diagramas/sphere.tex}
+	\caption{Esquema esfera}
+	\label{Fig:Sphere}	
+\end{figure}
+
+\section{Datos experimentales}
+
+	En esta sección, se mostrarán los resultados obtenidos a partir del procesamiento de datos experimentales utilizando los  procedimientos destacados durante la tesis. En particular, utilizamos un sistema UWB impulsivo para iluminar cilindros de poliamida para analizar su contenido de humedad.
+	
+	El sistema experimental se muestra en la figura \ref{Fig:testbed}. Tiene un transmisor y un receptor, ambos operando a 1.9 GHz como frecuencia central con un ancho de banda de 1 GHz. Los detalles sobre la configuración experimental se pueden encontrar en \cite{Altieri2020}. El transmisor ilumina el cilindro y la antena receptora mide el campo dispersado proveniente del cilindro. Se testean dos cilindros idénticos de nailon 6 cuyo radio es de 5 cm y su altura 6.5 cm. Uno de los cilindros contiene un 0\%  de agua, mientras que el otro 2\% en volumen. El objetivo es diferenciar entre ambos cilindros estimando sus modos naturales.
+	
+	\begin{figure}[ht]
+		\centerline{\includegraphics[width=6.5cm]{Figuras/testbed.jpg}}
+		\caption{Banco de pruebas para mediciones}
+		\label{Fig:testbed}
+	\end{figure}
+	
+	Para medir las señales de dispersión, se envía un pulso rectangular con un tiempo de repetición de pulso (PRT) de 100 nseg y una trama de 9 mseg. Luego, cada intervalo de 0,1 mseg del cuadro total se promedia para obtener una medición. Los cilindros están ubicados a 40 cm de las antenas y se realizaron varias mediciones moviendo el cilindro horizontalmente entre -10º y 10º respecto a las antenas. Además, se realizaron mediciones sin cilindros con el fin de eliminar el ruido introducido por los reflejos en la habitación.
+	
+	\begin{figure}[ht]
+		\centerline{\includegraphics[width=6.5cm]{Figuras/senales}}
+		\caption{Señal medida  para cilindros con 0\% y 2\% de contenido de humedad.}
+		\label{Fig:backscattered}
+	\end{figure}
+	
+	La Figura \ref{Fig:backscattered} muestra las realizaciones de dos mediciones. Una corresponde a la señal de dispersión proveniente del cilindro seco, mientras que la otra corresponde al cilindro húmedo. Se observa que en los primeros $20 nseg$ las dos señales presentan un pico muy fuerte. Este pico está relacionado con los reflejos especulares de los cilindros. Después de los $20 nseg$, las dos señales comienzan a mostrar algunas diferencias. Es aquí donde la dispersión depende en gran medida de la composición del cilindro.
+
+     Para cada señal observada se considera la respuesta tardía para el análisis de la estimación del orden. En primer lugar, se analizan los algoritmos de ESTER y SAMOS. 
+
+    En la figura \ref{Fig:EsterSamos_cil} se observan las funciones costos de cada método evaluadas para diferentes órdenes a partir de las mediciones realizadas a diferentes ángulos. Claramente, se observa que mientras ESTER estima órdenes chicos, SAMOS tiende a sobreestimar el orden. Esta observación se corresponde con la analizado en el capítulo \ref{chap:OrdenModelo}. 
+
+        \begin{figure}[ht]
+            \centering
+           \begin{subfigure}{0.4\linewidth}
+			\centering
+			\includegraphics[width = \linewidth]{Figuras/J_ester_UWB.pdf}
+			\caption{ESTER}
+		\end{subfigure}
+        \begin{subfigure}{0.4\linewidth}
+			\centering
+			\includegraphics[width = \linewidth]{Figuras/J_samos_UWB.pdf}
+			\caption{SAMOS}
+		\end{subfigure}
+        \caption{Funciones costo de los algoritmos ESTER y SAMOS evaluada en diferentes ordenes.}
+        \label{Fig:EsterSamos_cil}    
+        \end{figure}
+
+     Cuando aplicamos el algoritmo de estimación de orden propuesto en el capítulo \ref{chap:CriterioOrdenOpt} podemos ver que el orden estimado es más parecido al estimado con SAMOS. Sin embargo, se ve que no existe tanta dispersión.
+
+        \begin{figure}
+            \centering
+            \begin{subfigure}{0.3\linewidth}
+                \centering
+                \includegraphics[width = \linewidth]{Figuras/orden_ester_UWB.pdf}
+                \caption{ESTER.}
+            \end{subfigure}
+            \begin{subfigure}{0.3\linewidth}
+                \centering
+                \includegraphics[width = \linewidth]{Figuras/orden_samos_UWB.pdf}
+                \caption{SAMOS.}
+            \end{subfigure}
+            \begin{subfigure}{0.3\linewidth}
+                \centering
+                \includegraphics[width = \linewidth]{Figuras/orden_mio_UWB.pdf}
+                \caption{Método propuesto.}
+            \end{subfigure}
+            \caption{Histogramas para el orden estimado para diferentes métodos}
+            \label{fig:enter-label}
+        \end{figure}
+
+        
+    Por otro lado, se notó que el contenido espectral se concentra en $\Upsilon = (0,0.5] GHz$ . En particular, los modos se agrupan en  $5$ intervalos de frecuencia diferentes que se definen de acuerdo con la Tabla \ref{Table:segments}.
+
+	\begin{table}[ht]
+		\centering
+		\caption{Intervalos de frecuencia.\label{Table:segments}}
+		{\begin{tabular*}{20pc}{@{\extracolsep{\fill}}cccc@{}}
+				& $\nu_{c_i}$(GHz)       & $\nu_{i_{min}}$(GHz)      & $\nu_{i_{max}}$(GHz) \\ \hline \\[-0.9em] 
+				
+				$\Upsilon_1$   & 0.05 & 0.00 & 0.10  \\ 
+				$\Upsilon_2$   & 0.15 & 0.10 & 0.20  \\ 
+				$\Upsilon_3$   & 0.25 & 0.20 & 0.30 \\ 
+				$\Upsilon_4$   & 0.35 & 0.30 & 0.40   \\ 
+				$\Upsilon_5$   & 0.45 & 0.35 & 0.50   \\ \hline	
+		\end{tabular*}}{}
+	\end{table}
+
+    A partir del problema de optimización presentado en el capítulo \ref{chap:ModeloSumExp}, se define el error cometido en la estimación dependiente del orden del modelo como
+    \begin{equation}
+        \mathrm{error}(m) = \frac{1}{N}\sum_{n=0}^{N-1}|y_n - \hat{y_n}|^2, \qquad \text{sujeto a } \rank(\Hank_{\hat{\y}}) = m,
+        \label{Eq:Error_est}
+    \end{equation}
+    donde $\y = [y_0, y_1, \ldots, y_{N-1}]^T$ es el vector de medición e $\hat{\y}$ es una aproximación de la medición que es modelada por una combinación lineal de $m$ funciones exponenciales. Por lo tanto, una forma de encontrar el orden del modelo es buscar el mínimo de esta función. Teniendo en cuenta las bandas de frecuencia de la tabla \ref{Table:segments}, para cada medición se obtiene el error de estimación \eqref{Eq:Error_est} para diferentes órdenes. Luego, se busca el mínimo y se compara con los obtenidos usando ESTER, SAMOS y el método de estimación propuesto en el capítulo \ref{chap:CriterioOrdenOpt}. 
+
+
+
+        
+    \subsection{Estimación de frecuencias}
+	    A la hora de estimar las frecuencias, se aplica la estrategia de \emph{shift-and-zoom} usando un factor de submuestreo $Q = 2$ en cada intervalo.
+    En la Fig. \ref{Fig:Avas_cilSeco} se muestran los autovalores con y sin la técnica  \emph{shift-and-zoom} con los intervalos de frecuencia en el plano complejo para las señales que corresponden a la dispersión del cilindro con 0\% agua. Vemos que cuando no se aplica la técnica, los autovalores estimados se distribuyen por toda la banda de frecuencia, mientras que cuando se aplica \emph{shift-and-zoom} podemos reconocer la ubicación de diferentes autovalores. En la Fig. \ref{Fig:Avas_cilHumedo} se observa  el mismo fenómeno con el análisis del cilindro con 2\% agua.
+	
+	\begin{figure}[ht]
+		\centering
+		\centerline{\includegraphics[width=6.0cm]{Figuras/Ava_cilseco}}
+		\caption{Autovalores para cilindro con $0\%$ agua.}
+		\label{Fig:Avas_cilSeco}
+	\end{figure}
+	
+	\begin{figure}[ht]
+		\centering
+		\centerline{\includegraphics[width=6.0cm]{Figuras/Ava_cilhumedo}}
+		\caption{Autovalores para cilindro con $2\%$ agua.}
+		\label{Fig:Avas_cilHumedo}
+	\end{figure}		
+	
+	
+	Se debe señalar que  a partir de las Figs \ref{Fig:Avas_cilSeco}\ref{Fig:Avas_cilHumedo} los autovalores  encontrados son independientes de los ángulos de aspecto. Existe una pequeña propagación que se debe al ruido que no se ha podido filtrar en la primera etapa. Aun así, se pueden reconocer pequeños grupos donde se pueden encontrar los autovalores.
+	
+	Finalmente, se comparan los autovalores encontrados usando la técnica de \emph{shift-and-zoom}  para los dos cilindros. Los autovalores se pueden observar en la Fig.\ref{Fig:Avas_cilSecoHumedo}. Como era de esperar, los autovalores son muy similares, ya que los cilindros tienen tamaños iguales y su concentración de agua no es muy diferente entre sí. Sin embargo, los autovalores no coinciden completamente y se pueden utilizar como características para la clasificación de blancos.
+	
+	\begin{figure}[ht]
+		\begin{minipage}[b]{.48\linewidth}
+			\centering
+			\centerline{\includegraphics[width=4.0cm]{Figuras/set2}}
+			%  \vspace{1.5cm}
+			\centerline{(a) Conjunto $\varUpsilon_2$}\medskip
+		\end{minipage}
+		\hfill
+		\begin{minipage}[b]{0.48\linewidth}
+			\centering
+			\centerline{\includegraphics[width=4.0cm]{Figuras/set5}}
+			%  \vspace{1.5cm}
+			\centerline{(b) Conjunto $\varUpsilon_4$}\medskip
+		\end{minipage}
+		%
+		\begin{minipage}[b]{1.0\linewidth}
+			\centering
+			\centerline{\includegraphics[width=4.5cm]{Figuras/set1}}
+			%  \vspace{2.0cm}
+			\centerline{(a) Conjunto $\varUpsilon_1$}\medskip
+		\end{minipage}
+		\caption{Autovalores cilindro con $0\%$ agua (puntos Azules), cilindro con $2\%$ agua (puntos Rojos).}
+		\label{Fig:Avas_cilSecoHumedo}
+	\end{figure}
+	
+	%\section{Conclusiones}
+	
+	%	La estimación de frecuencias se vuelve vulnerable ante pequeñas perturbaciones en los datos observados cuando las componentes de frecuencias son  muy débiles y/o la distancia entre ellos es pequeña. La estrategia de \emph{shift-and-zoom} hace frente a este último problema mejorando el espaciado entre frecuencias complejas re-muestreando la señal observada. Esta estrategia se aplicó para identificar las frecuencias naturales de dos cilindros de misma forma pero con diferente concentración de agua con el fin de encontrar características que posibiliten poder clasificar entre los diferentes blancos.
+		
+		
+	
