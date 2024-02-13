@@ -1,0 +1,281 @@
+\documentclass[a4paper,openright]{report}
+%\documentclass[12pt]{article}
+
+%\usepackage{report}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{booktabs}   % professional-quality tables
+\usepackage{nicefrac}   % compact symbols for 1/2 etc.
+
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{babel}
+
+\usepackage{pgf}
+\usepackage{pgfplots}
+%\pgfplotsset{compat = 1.18}
+
+\usepackage[Algoritmo]{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage{appendix}
+%\usepackage{pstricks}
+
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{comment}
+\usepackage{epstopdf}
+
+\usepackage{chngcntr}
+\usepackage{multirow}
+
+\usepackage{eso-pic}
+\usepackage{ragged2e}
+\usepackage{geometry}
+
+
+%\usepackage[intoc]{nomencl}
+%\makenomenclature
+%\renewcommand{\nomname}{Lista de s\'{i}mbolos}
+
+%\usepackage[longnamesfirst,nonamebreak]{natbib}
+%\numberwithin{equation}{section}
+
+%\linespread{1.3}
+%\oddsidemargin .1cm
+%\textwidth 16cm
+%\topmargin 0in
+%\textheight 8.5in
+
+
+\setcounter{secnumdepth}{4} % para que ponga 1.1.1.1 en subsubsecciones
+\setcounter{tocdepth}{4} % para que ponga subsubsecciones en el indice
+
+\graphicspath{Figuras/} 
+
+% Definiciones Propias
+\def\R{\mathbb{R}} % Números reales
+\def\N{\mathbb{N}} % Números naturales
+\def\C{\mathbb{C}} % Numeros Complejos
+
+\def\E{\mathbb{E}} % Esperanza
+\def\P{\mathbb{P}} % Probabilidad
+\def\Normal{\mathcal{N}} % Variable aletoria Normal
+\def\NormalC{\mathcal{CN}} % Variable aletoria Normal compleja
+
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+
+
+% Matrices
+\def\matA{\mathbf{A}}
+\def\matB{\mathbf{B}}
+\def\matC{\mathbf{C}}
+\def\matD{\mathbf{D}} 
+\def\matE{\mathbf{E}}
+\def\matF{\mathbf{F}} 
+\def\matG{\mathbf{G}}
+\def\matH{\mathbf{H}} 
+\def\matI{\mathbf{I}}
+\def\matJ{\mathbf{J}}
+\def\matM{\mathbf{M}}
+\def\matN{\mathbf{N}}
+\def\matP{\mathbf{P}}
+\def\matQ{\mathbf{Q}} 
+\def\matR{\mathbf{R}}
+\def\matS{\mathbf{S}} 
+\def\matT{\mathbf{T}}
+\def\matU{\mathbf{U}}
+\def\matV{\mathbf{V}} 
+\def\matW{\mathbf{W}}  
+\def\matX{\mathbf{X}} 
+\def\matY{\mathbf{Y}}
+\def\matZ{\mathbf{Z}}
+
+\def\Thetab{\boldsymbol{\Theta}}
+\def\Phib{\boldsymbol{\Phi}}  
+\def\Sigmab{\boldsymbol{\Sigma}}
+\def\Gammab{\boldsymbol{\Gamma}} 
+\def\Lambdab{\boldsymbol{\Lambda}}
+\def\alphab{\boldsymbol{\alpha}}
+
+% Vectores
+\def\b{\mathbf{b}}
+\def\c{\mathbf{c}}  
+\def\e{\mathbf{e}}
+\def\h{\mathbf{h}}
+\def\k{\mathbf{k}}
+\def\n{\mathbf{n}} 
+\def\p{\mathbf{p}}
+\def\q{\mathbf{q}}
+\def\r{\mathbf{r}}
+\def\u{\mathbf{u}}
+\def\v{\mathbf{v}}
+\def\w{\mathbf{w}}
+\def\x{\mathbf{x}}
+\def\y{\mathbf{y}}
+\def\z{\mathbf{z}}
+
+\def\vecpsi{\boldsymbol{\psi}}
+\def\veclambda{\boldsymbol{\lambda}}
+\def\vecalpha{\boldsymbol{\alpha}}
+\def\vecomega{\boldsymbol{\omega}}
+\def\vectheta{\boldsymbol{\theta}}
+\def\vecgamma{\boldsymbol{\gamma}}
+\def\vecxi{\boldsymbol{\xi}}
+
+% Conjuntos
+\def\setC{\mathcal{C}} 
+\def\Hank{\mathcal{H}} 
+\def\matProj{\mathcal{P}}  
+\def\setR{\mathcal{R}}
+\def\setS{\mathcal{S}} 
+\def\setW{\mathcal{W}}
+\def\setX{\mathcal{X}}
+\def\setY{\mathcal{Y}}
+\def\setZ{\mathcal{Z}}
+\def\setM{\mathcal{M}}
+\def\setI{\mathcal{I}}
+
+% Funciones
+\def\one{\mathbf{1}}
+\def\diag{\mathrm{diag}}
+\def\rank{\mathrm{rank}}
+\def\prox{\mathrm{prox}}
+\def\dist{\mathrm{dist}}
+\def\svd{\mathrm{svd}}  
+\def\L{\mathcal{L}} 
+\def\I{\mathcal{I}}  
+
+
+\newtheorem{theorem}{Teorema}
+\newtheorem{Corollary}{Colorario}
+%\newtheorem{proof}{Demostración}
+\newtheorem{definition}{Definición}
+\newtheorem{lemma}{Lema}
+\newtheorem{prop}{Proposición}
+\newtheorem{Prob}{Problema}
+
+\definecolor{FiubaDoc}{RGB}{128,0,0}
+
+%\title{\textbf{Análisis multiexponencial aplicado a señales de radar UWB}}
+%\author{
+%        Ing. Raymundo Albert \\[2.5ex]
+%        \textbf{Directora}: Dra. Cecilia Galarza \\[5.0ex]
+%        \normalsize{Facultad de Ingeniería, Universidad de Buenos Aires} \\
+%}
+%
+%\date{Septiembre 2023}
+
+\begin{document}
+
+%\maketitle
+
+\renewcommand{\tablename}{Tabla} % Cambia la palabra Cuadro por Tabla.
+%\renewcommand{\listtablename}{\'{I}ndice de tablas}
+%\tableofcontents
+
+%\cleardoublepage
+%\addcontentsline{toc}{chapter}{Lista de figuras}  % Para que aparezca en el ndice.
+%\listoffigures
+
+%\cleardoublepage
+%\addcontentsline{toc}{chapter}{Lista de tablas}
+%\listoftables
+
+
+%\printnomenclature
+
+%\pagenumbering{arabic}
+
+\input{Caratula/caraturla_prueba2.tex}
+
+\newpage 
+\restoregeometry
+\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+\thispagestyle{empty}
+\begin{abstract}
+	
+	La necesidad de detectar señales, recuperar información útil a partir de éstas, realizar clasificaciones y tomar decisiones es un problema presente en muchas aplicaciones de procesamiento de señales. Dado que en la práctica las señales se ven corrompidas por el ruido, es esencial optimizar el procesamiento y la clasificación de la señales para garantizar una toma de decisiones correcta.
+	
+\vspace{2mm}
+    
+    En esta tesis se analiza el modelo de una mezcla de exponenciales complejas amortiguadas. Un obstáculo importante es el de  determinar el número de componentes en la mezcla y, para cada componente, el valor de la frecuencia, factor de amortiguación, la amplitud y la fase del modelo. El trabajo se centrará específicamente en el problema de estimación de la cantidad de exponenciales presentes, así como también en la estabilidad numérica de las soluciones obtenidas por diferentes algoritmos de estimación de los parámetros. Esto es especialmente difícil si uno o más componentes están cerca entre sí y/o presentan una energía comparable o menor frente a una perturbación.
+
+\vspace{2mm}
+    
+    Para la estimación de la cantidad de componentes en la mezcla se analizan las ventajas y desventajas de los métodos existentes de manera de proponer una nueva estrategia de estimación que mejore significativamente el rendimiento. Para el caso de la estabilidad numérica se extienden los resultados conocidos así como también se propone una nueva estrategia para poder obtener mejores estimaciones de las componentes de la mezcla de exponenciales. %Todos los métodos propuestos son validados usando experimentos numéricos y comparando su desempeño con resultados obtenidos en la literatura.
+
+\vspace{2mm}
+
+	Se propone una estrategia alternativa de clasificación de señales exponenciales basada en el rango numérico de un haz matricial.  Este problema de dispersión electromagnética se puede modelar como una suma de exponenciales complejas donde las frecuencias son características propias del material. Por lo tanto, se  propone utilizar los nuevos métodos aquí propuestos  debido a que la estimación correcta de las frecuencias complejas en la señal reflejada se vuelve relevante tanto para la identificación y/o clasificación del material.  
+
+\vspace{5mm}
+	Todos los métodos propuestos son validados usando experimentos numéricos y comparando su desempeño con resultados obtenidos en la literatura. También se validarán utilizando simulaciones de dispersión electromagnética como datos experimentales para diferentes materiales dieléctricos.
+   
+\end{abstract}
+
+\newpage
+\setcounter{page}{1}
+
+\input{Introduccion/introduccion_V3.tex}
+
+\newpage
+
+\input{ModeloSumExp/modelosumexp_V2.tex}
+
+\newpage
+
+\input{OrdenModelo/ordenmodelo_v3.tex}
+
+\newpage
+
+\input{MatricesAleatorias/MatricesAleatorias_v3.tex}
+
+\newpage
+
+\input{CriterioOrdenOpt/criterioordenopt.tex}
+
+\newpage
+
+\input{EstabilidadNumerica/EstabilidadNumerica.tex}
+
+\newpage
+
+\input{AnalisisSenalesUWB/senalUWB_V2.tex}
+
+\newpage
+
+\input{RangoNumerico/RangoNumerico.tex}
+
+\newpage
+
+\input{Conclusiones/conclusiones.tex}
+
+\newpage
+\bibliographystyle{plain}
+%\nocite{*}
+\bibliography{bibliografia.bib}
+
+\end{document}
