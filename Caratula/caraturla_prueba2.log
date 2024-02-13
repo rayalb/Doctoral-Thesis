@@ -1,0 +1,278 @@
+This is LuaHBTeX, Version 1.14.0 (TeX Live 2022/dev/Debian)  (format=lualatex 2023.11.15)  4 JAN 2024 15:53
+ restricted system commands enabled.
+**caraturla_prueba2.tex
+(./caraturla_prueba2.tex
+LaTeX2e <2021-11-15> patch level 1
+[\directlua]:1: module 'luaotfload-main' not found:
+	no field package.preload['luaotfload-main']
+	[kpse lua searcher] file not found: 'luaotfload-main'
+Error in luaotfload: reverting to OT1 L3 programming layer <2022-01-21>
+Inserting `tracingstacklevels' at position 1 in `input_level_string'.
+(/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 5
+4.
+
+(/usr/share/texmf/tex/latex/lm/ot1lmr.fd
+File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+))
+\c@part=\count183
+\c@chapter=\count184
+\c@section=\count185
+\c@subsection=\count186
+\c@subsubsection=\count187
+\c@paragraph=\count188
+\c@subparagraph=\count189
+\c@figure=\count190
+\c@table=\count191
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen137
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks16
+\inpenc@posthook=\toks17
+
+
+Package inputenc Warning: inputenc package ignored with utf8 based engines.
+
+) (/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
+2.
+
+(/usr/share/texmf/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks18
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: luatex.def on input line 107.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/luatex.def
+File: luatex.def 2021/06/01 v1.2c Graphics/color driver for luatex
+))
+\Gin@req@height=\dimen138
+\Gin@req@width=\dimen139
+)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: luatex.def on input line 227.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1352.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1356.
+Package xcolor Info: Model `RGB' extended on input line 1368.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1370.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1371.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2020/10/14 v3.0a eso-pic (RN)
+\ESO@tempdima=\dimen140
+\ESO@tempdimb=\dimen141
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ragged2e/ragged2e.sty
+Package: ragged2e 2021/12/15 v3.1 ragged2e Package
+\CenteringLeftskip=\skip49
+\RaggedLeftLeftskip=\skip50
+\RaggedRightLeftskip=\skip51
+\CenteringRightskip=\skip52
+\RaggedLeftRightskip=\skip53
+\RaggedRightRightskip=\skip54
+\CenteringParfillskip=\skip55
+\RaggedLeftParfillskip=\skip56
+\RaggedRightParfillskip=\skip57
+\JustifyingParfillskip=\skip58
+\CenteringParindent=\skip59
+\RaggedLeftParindent=\skip60
+\RaggedRightParindent=\skip61
+\JustifyingParindent=\skip62
+)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-luatex.def
+File: l3backend-luatex.def 2022-01-12 L3 backend support: PDF output (LuaTeX)
+\l__color_backend_stack_int=\count192
+\l__pdf_internal_box=\box50
+)
+(./caraturla_prueba2.aux)
+\openout1 = caraturla_prueba2.aux
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 11.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 1
+1.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count193
+\scratchdimen=\dimen142
+\scratchbox=\box51
+\nofMPsegments=\count194
+\nofMParguments=\count195
+\everyMPshowfont=\toks19
+\MPscratchCnt=\count196
+\MPscratchDim=\dimen143
+\MPnumerator=\count197
+\makeMPintoPDFobject=\count198
+\everyMPtoPDFconversion=\toks20
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 28
+.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd
+File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
+)
+LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <10> not available
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 28.
+LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <33> not available
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 28.
+
+Overfull \hbox (18.92574pt too wide) in paragraph at lines 28--28
+ [] \T1/phv/bx/n/33 Análi-sis mul-ti-ex-po-nen-
+ []
+
+
+Overfull \hbox (10.86699pt too wide) in paragraph at lines 28--28
+ \T1/phv/bx/n/33 cial apli-cado a señales
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--28
+ \T1/phv/bx/n/33 de radar UWB
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+ []\T1/phv/m/n/20 Ing. Ray-mundo Al-bert
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 32--32
+ []\T1/phv/m/n/15 Doc-tor-ado en In-ge-niería
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 34--34
+ []\T1/phv/m/n/11 Di-rec-tora:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 35--35
+ []\T1/phv/m/n/11 Dra. Ce-cilia Galarza
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+ []\T1/phv/m/n/11 Ju-ra-dos:
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 38--38
+ []\T1/phv/m/n/11 Ju-rado 1
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--39
+ []\T1/phv/m/n/11 Ju-rado 2
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 40--40
+ []\T1/phv/m/n/11 Ju-rado 3
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 41--41
+ []\T1/phv/m/n/11 Ju-rado 4
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 42--42
+ []\T1/phv/m/n/11 Ju-rado 5
+ []
+
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 44.
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--53
+ []\T1/phv/m/it/10 Ciu-dad de Buenos Aires, 2024 
+ []
+
+<logoFiuba.png, id=1, 300.12125pt x 125.46875pt>
+File: logoFiuba.png Graphic file (type png)
+<use logoFiuba.png>
+Package luatex.def Info: logoFiuba.png  used on input line 53.
+(luatex.def)             Requested size: 300.12051pt x 125.46843pt.
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}<./logoFiuba.png>]
+[1] (./caraturla_prueba2.aux))
+
+Here is how much of LuaTeX's memory you used:
+ 2506 strings out of 477805
+ 100000,383344 words of node,token memory allocated
+ 443 words of node memory still in use:
+   3 hlist, 1 vlist, 1 rule, 2 glue, 63 glue_spec, 1 write nodes
+   avail lists: 2:23,3:32,4:26,5:89,6:24,7:720,9:124,11:48
+ 23103 multiletter control sequences out of 65536+600000
+ 34 fonts using 1418051 bytes
+ 55i,13n,59p,232b,333s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texlive/texmf-dist/fo
+nts/enc/dvips/base/8r.enc}</usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/urw/helvetic/uhvro8a.pfb>
+Output written on caraturla_prueba2.pdf (2 pages, 50080 bytes).
+
+PDF statistics: 31 PDF objects out of 1000 (max. 8388607)
+ 20 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 131072)
+ 1 words of extra memory for PDF output out of 10000 (max. 100000000)
+
