@@ -1,0 +1,333 @@
+\chapter{Clasificación de suma de exponenciales complejas usando el rango numérico asociado} \label{chap:RangoNumerico}
+
+	%\section{Introducción}
+	
+		Como se mencionó en el capítulo \eqref{chap:ModeloSumExp} los métodos como ESPRIT o el \emph{Matrix Pencil} estiman los modos a partir de resolver el siguiente problema de autovalores generalizados
+		\begin{equation}
+			\Hank_{\x,f}\v = \lambda\Hank_{\x,l}\v,
+			\label{Eq:GEP}
+		\end{equation}
+		donde el conjunto $\{\Hank_{\x,f}-\lambda\Hank_{\x,l}: \lambda\in\C\}$ es el \emph{matrix pencil}. Cuando no hay ruido presente en la señal, el rango del \emph{pencil} es $r$ mientras $\lambda\neq z_i$, $i=1,\ldots, r$. Cuando $\lambda = z_i$, el rango del \emph{pencil} se reduce por uno. Alternativamente, cuando $\Hank_{\x,l}$ es de rango completo, $z_i$ es solución del siguiente problema de autovalores
+		\begin{equation}
+			\Hank_{\x,l}^\dagger\Hank_{\x,f}-\lambda\matI_r
+			\label{Eq:AVA}
+		\end{equation}
+		Sin embargo, cuando se considera señales ruidosas, el \emph{pencil} usualmente es de rango completo para cualquier escalar $\lambda$. Para resolver estos problemas se vieron soluciones posibles en los capítulos \eqref{chap:ModeloSumExp} y \eqref{chap:OrdenModelo}. Sin embargo, en el capítulo \eqref{chap:EstabilidadNumerica} se vió que el problema de autovalores generalizados puede estar mal condicionado. Especialmente, cuando los modos están agrupados muy cerca entre sí y tienen una energía asociada muy baja.
+		
+		Para verlo de forma gráfica se define la siguiente función $g:\C\to\R_{\ge0}$
+		\begin{equation}
+			g(\lambda) = \sigma_{min}\big\{\Hank_{\x,f}-\lambda\Hank_{\x,l}\big\}
+			\label{Eq:PseudoSpectra}
+		\end{equation}
+		donde $\sigma_{min}$ es el valor singular más chico. Cuando $\lambda=z_i$, se obtiene $g(z_i)=0$. Por lo tanto, los autovalores generalizados son mínimos locales de la función \eqref{Eq:PseudoSpectra}.
+		
+		Considere la suma de exponenciales complejas con $r=4$ bajo dos escenarios: uno sin ruido, y otro con perturbaciones. Tomando $n=r$, se construye $g^{\text{noiseless}}(\lambda)$ para la señal sin ruido y $g^{\text{noisy}}(\lambda)$ para la señal ruidosa. La Figura \ref{Fig:PseudoSpectra_noiseless} muestra las curvas de nivel de la función $g^{\text{noiseless}}(\lambda)$. Se observa que en este caso, sus mínimos coinciden con la posición de los $z_i$, $i = 1,\ldots,4$.
+		
+		\begin{figure}[ht]
+			\centering
+			\resizebox{0.5\linewidth}{!}{\input{Figuras/prueba_PseudoSpectra_noiseless.pgf}}
+			\caption{Función $g^{\text{noiseless}}(\lambda)$ y $z_1,\ldots,z_4$ ($'\times'$).}
+			\label{Fig:PseudoSpectra_noiseless}
+		\end{figure}
+		
+		A continuación la Figura \ref{Fig:PseudoSpectra_noisy} muestra las curvas de nivel para $g^{\text{noisy}}(\lambda)$ donde la se tiene una relación señal a ruido de 30 dB. En este caso, los mínimos locales se alejan de los valores reales de $z_1, \ldots, z_4$. Está claro a partir de este ejemplo tan simple que existen grandes dificultades al momento de identificar los modos de oscilación de señales ruidosas. Estas dificultades son aún más graves cuando se desconoce el valor de r y es necesario identificar el orden del modelo.
+		
+		\begin{figure}[ht]
+			\centering
+			\resizebox{0.5\linewidth}{!}{\input{Figuras/prueba_PseudoSpectra_noisy.pgf}}
+			\caption{Función $g^{\text{noisy}}(\lambda)$ y $z_1,\ldots,z_4$ ($'\times'$).}
+			\label{Fig:PseudoSpectra_noisy}
+		\end{figure}
+		
+	\section{Rango Numérico del \emph{matrix pencil}}
+	
+		Como se demostró anteriormente, resolver el problema de autovalores generalizados cuando se trabaja con señales ruidosas puede ser difícil. Sin embargo, es interesante definir una región en plano complejo donde se encuentran las diferentes soluciones. Un candidato en el rango numérico asociado al \emph{pencil} $(\Hank_{\y,f},\Hank_{\y,l})$. En esta sección se presentan definiciones y propiedades del rango numérico de matrices, de manera de poder presentar el resultado principal de esta sección. \cite{Horn1991}
+		
+		\begin{definition}
+			Sea $\matA\in\C^{n\times n}$, se define su rango numérico como
+			\begin{equation}
+				W(\matA) := \big\{\x^H\matA\x:\x\in\C^n,\x^H\x = 1\big\}\subset\C.
+				\label{Eq:numericalRange}
+			\end{equation}
+		\end{definition}
+		Algunas propiedades del rango numérico son
+		\begin{enumerate}
+		\item Todos los autovalores de $\matA$ se encuentran en $W(\matA)$.
+		\item $W(A)$ es un conjunto cerrado y convexo
+		\item Se puede escribir como \cite{Bonsall1971}
+		\begin{equation}
+			W(\matA) = \big\{\theta\in\C:\|\matA-\lambda\matI_n\|_2\ge|\theta-\lambda|,\forall\lambda\in\C\big\}.
+			\label{Eq:numericalRange1}
+		\end{equation}
+		\end{enumerate}
+		El conjunto $W(\matA)$ aparece naturalmente en los algoritmos de estimación recursiva de los autovalores, por ejemplo el algoritmo de Arnoldi \cite{Arnoldi1951} aproxima los autovalores con elementos de $W(\matA)$.
+		
+		El concepto de autovalores se puede generalizar para el caso de dos matrices rectangulares. Sean $\matA,\matB\in\C^{m\times n}$. Un escalar $\beta$ es un autovalor generalizado de $(\matA,\matB)$ si existe $\x\in\C^n$ tal que
+		\begin{equation}
+			\matA\x = \beta\matB\x, \qquad \x\neq\mathbf{0}.
+			\label{Eq:numericalRange2}
+		\end{equation}
+		Alternativamente, si la matriz $\matB$ es de rango completo, el problema \eqref{Eq:numericalRange2} se puede escribir como
+		\begin{equation}
+			\matB^\dagger\matA\x = \beta\x, \qquad \x\neq\mathbf{0}.
+			\label{Eq:numericalRange4}
+		\end{equation}
+		
+		
+		De la ecuación \eqref{Eq:numericalRange1}, se introduce la definición del rango numérico para el conjunto $(\matA,\matB)$ \cite{Chorianopoulos2009}
+		\begin{equation}
+			\begin{aligned}
+			W_{\|\cdot\|_2}(\matA;\matB) & = \big\{\theta\in\C:\|\matA-\lambda\matB\|_2\ge|\theta-\lambda|,\forall\lambda\in\C\big\}\\[0.3em]
+			& \bigcap_{\lambda\in\C}\mathcal{D}(\lambda,\|\matA-\lambda\matB\|).
+			\end{aligned}
+			\label{Eq:numericalRange3}
+		\end{equation}
+		
+		A continuación se enuncian algunas propiedades de $W_{\|\cdot\|_2}(\matA;\matB)$.
+		
+		\begin{prop}
+			$W_{\|\cdot\|_2}(\matA;\matB)$ es un conjunto no cerrado si y sólo si $\|\matB\|_2\ge1$
+		\end{prop}
+		\begin{prop}
+			Cualquier autovalor generalizado $\beta$ de $(\matA,\matB)$ con autovector asociado $\x\in\C^n$ tal que $\|\matB\x\|\ge 1$, se encuentra en $W_{\|\cdot\|_2}(\matA;\matB)$.
+		\end{prop}
+		
+		\begin{prop}
+			Sea $\alpha\in\C$ tal que $|\alpha|\ge 1$. Luego,
+			\[W_{\|\cdot\|_2}(\matA;\matB)\subset W_{\|\cdot\|_2}(\alpha\matA;\alpha\matB).\]
+		\end{prop}
+		
+		\begin{prop}\label{Prop:numericalRange}
+			Si se usa la norma de Frobenius en \eqref{Eq:numericalRange3} y $\|\matB\|_F\ge 1$, se obtiene
+			\begin{equation}
+				W_{\|\cdot\|_F}(\matA;\matB) = \mathcal{D}\bigg(\frac{\langle\matA,\matB\rangle}{\|\matB\|_F^2}, \bigg\|\matA - \frac{\langle\matA,\matB\rangle}{\|\matB\|_F^2}\matB\bigg\|_F\frac{\sqrt{\|\matB\|_F^2-1}}{\|\matB\|_F^2}\bigg).
+				\label{Eq:numericalRange5}
+			\end{equation}
+		\end{prop}
+		En este caso, el rango numérico está caracterizado por un disco cerrado centrado en $\frac{\langle\matA,\matB\rangle}{\|\matB\|_F^2}$ que debido a la equivalencia entre la norma espectral y la de Frobenius, contiene al conjunto $W_{\|\cdot\|_2}(\matA,
+		\matB)$.
+		
+		\begin{lemma}\label{Lemma:NumericalRange1} % VER
+			Sean matrices $\matA,\matB\in\C^{n\times n}$, $\matB$ una matriz no singular y $\|\matB\|_2=1$, se tiene que $W_{\|\cdot\|_2}(\matA;\matB) \subseteq W(\matB^{-1}\matA)$.
+		\end{lemma}
+		\begin{proof}
+			Usando la definición de rango numérico \eqref{Eq:numericalRange1}, y se tiene que
+			\[\begin{aligned}
+				W_{\|\cdot\|_2}(\matA;\matB) & = \big\{\theta\in\C:\|\matA-\lambda\matB\|_2\ge|\theta-\lambda|,\forall\lambda\in\C\big\}\\[0.3em]
+				&  \big\{\theta\in\C:\|\matB(\matB^{-1}\matA-\lambda\matI_n)\|_2\ge|\theta-\lambda|,\forall\lambda\in\C\big\}\\[0.3em]
+				& \subseteq \big\{\theta\in\C:\|\matB^{-1}\matA-\lambda\matI_n\|_2\ge|\theta-\lambda|,\forall\lambda\in\C\big\}\\[0.3em]
+				& = W(\matB^{-1}\matA).
+			\end{aligned}\]
+		\end{proof}
+		
+		En la ecuación \eqref{Eq:numericalRange4} se formuló el problema de autovalores generalizados como un problema de autovalores simple. Como consecuencia, si se consideran matrices cuadradas, $\beta$ en \eqref{Eq:numericalRange2} existe y éste se encuentra en $W(\matB^{-1}\matA)$. En particular, por el Lema\ref{Lemma:NumericalRange1} se tiene que $W_{\|\cdot\|_2}(\matA;\matB)\subseteq W(\matB^{-1}\matA)$.
+		
+	\section{Problema de Clasificación}  
+	
+		En esta sección se busca un criterio para clasificar pares de matrices $(\matA,\matB)$ de acuerdo a sus autovalores generalizados. El enfoque directo sería calcular estos autovalores. Sin embargo, se vio que el problema de autovalores generalizados puede estar mal condicionado. Alternativamente, a la solución propuesta en el capítulo \eqref{chap:EstabilidadNumerica}, se propone construir una estrategia que use el conjunto $W_{\|\cdot\|_2}(\matA;\matB)$ para caracterizar el comportamiento del par $(\matA,\matB)$. Recurriendo a un abuso menor de notación, se dice que la clase de matrices $\Theta$ está definida por un conjunto finito de números complejos que también se denotaran $\Theta$.
+		
+		\begin{definition}\label{Def:numericalRange}
+			Sea $\Theta = \big\{\theta_1,\theta_2,\ldots,\theta_p\big\}\subset\C$. Considere dos matrices $\matA,\matB\in\C^{m\times n}$, con $\|\matB\|_2\ge 1$. Se dice que $(\matA,\matB)$ pertenece a la clase $\Theta$ si y solo si $\theta_i\in W_{\|\cdot\|_2}(\matA;\matB)$ para todo $i=1,\ldots,p$.
+			El conjunto $\big\{\theta_1,\theta_2,\ldots,\theta_p\big\}$ es el conjunto candidato, $\Theta$ es la clase candidato, y $(\matA,\matB)$ es el par observado.
+		\end{definition}
+		
+		El procedimiento de clasificación requiere verificar si $\theta_i$ pertenece a $W_{\|\cdot\|_2}(\matA;\matB)$. El siguiente teorema muestra como responder esta pregunta resolviendo un problema de minimización.
+		
+		\begin{theorem}\label{The:numericalRange}
+			Dado $\theta\in\C$, se define la función $f_\theta:\C\to\R$
+			\[f_\theta(\lambda) = \|\matA-\lambda\matB\|_2-|\theta-\lambda|.\]
+			Luego, $\theta\in W_{\|\cdot\|_2}(\matA;\matB)$ si y solo si
+			\[
+				\inf_{\lambda\in\C}f_{\theta}(\lambda)\ge 0
+			\]
+		\end{theorem}
+		\begin{proof}
+			a partir de la definición de $W_{\|\cdot\|_2}(\matA;\matB)$ en \eqref{Eq:numericalRange3}, los siguientes postulados son equivalentes:
+			\[\begin{aligned}
+				& \theta\in W_{\|\cdot\|_2}(\matA;\matB) \qquad \Leftrightarrow\\[0.3em]
+				& \|\matA - \lambda\matB\|_2\ge|\theta-\lambda|, \quad \forall\lambda\in\C\qquad\Leftrightarrow\\[0.3em]
+				&\|\matA-\lambda\matB\|_2-|\theta-\lambda|\ge 0\quad\forall\lambda\in\C\qquad\Leftrightarrow\\[0.3em]
+				&f_{\theta}(\lambda)\ge 0,\quad\forall\lambda\in\C.
+			\end{aligned}\] 
+			Tomando el ínfimo se obtiene el resultado.
+		\end{proof}
+		
+		\subsection{Clasificación de suma de exponenciales complejas}
+		
+			Considere que se obtiene mediciones modeladas como una suma de exponenciales complejas
+			\begin{equation}
+				y_k = \sum_{i=1}^{r}c_iz_i^k + w_k, \qquad k = 0,1,\ldots
+				\label{Eq:noisySignal_NR}
+			\end{equation}
+			En particular, considere el conjunto de frecuencias complejas $\big\{z_i,i=1,\ldots,r\}$ que caracteriza la señal observada. Como tal, se asocia una señal observada a un conjunto de frecuencias complejas. Por ejemplo, cuando se observa un fenómeno electromagnético, la clase de señales representa el material del que está hecho el objeto que interactúa con el pulso electromagnético. Luego, dada la señal de observación, $y_k$, la pregunta es si esta observación está dentro de la clase definida a priori.
+			
+			Siguiendo este camino, se asume que se conocen todas o un subconjunto de las frecuencias complejas en la señal de interés. Es decir, se conoce $\mathcal{Z} = \big\{z_i:i=1,\ldots,p\big\}$ donde $p\le r$. Luego, a partir de la señal observada, se construye la matriz de Hankel, $\Hank_{\y}$ y sus matrices asociadas $\Hank_{\y,f},\Hank_{\y,l}$. 
+			
+			Una extensión sencilla de la definición \eqref{Def:numericalRange} conduce a la siguiente definición
+			
+			\begin{definition}\label{Def:numericalRange1}
+				Sea $\mathcal{Z}= \big\{z_1,z_2,\ldots,z_p\big\}\subset\C$. Considera las matrices $\Hank_{\y,f},\Hank_{\y,l}$ formadas a partir de $\y$. Se dice que $\y$ pertenece a la clase $\mathcal{Z}$ si y solo si $z_i\in W_{\|\cdot\|_2}(\Hank_{\y,f};\Hank_{\y,l})$ para todo $i=1,\ldots,p$.
+				El conjunto $\mathcal{Z}$ es el conjunto candidato que caracteriza a la clase candidata, $\y$ es a señal observada, y $(\Hank_{\y,f};\Hank_{\y,l})$ es el par observado.
+			\end{definition}
+			
+			La Definición \eqref{Def:numericalRange1} permite la clasificación de la señal observada sin resolver explícitamente el problema de autovalores formulado en MPM o ESPRIT. Este procedimiento se conoce como Clasificación por Rango numérico (CNR).
+			
+			\begin{algorithm}
+				\caption{Clasificación mediante rango numérico}
+				\begin{algorithmic}[1]
+					\State {Entrada: $\y\in\C^{m+n-1}$, $\mathcal{Z}= \big\{z_1,z_2,\ldots,z_p\big\}$ y un escalar $D>1$.}
+					\State {Obtener una aproximación de rango para $\Hank_{\y}$.}\label{step:lro_Hankel}
+					\State {Obtener el par $(\Hank_{\y,f};\Hank_{\y,l})$.}
+					\If {$\|(\Hank_{\y,l}\|_2<1$}
+						\State {$\Hank_{\y,f} = \frac{D}{\|\Hank_{\y,f}\|_2}\Hank_{\y,f}$}\label{step:scaleA}
+						\State {$\Hank_{\y,l} = \frac{D}{\|\Hank_{\y,l}\|_2}\Hank_{\y,l}$}\label{step:scaleB}
+					\EndIf
+					\For {$k = 1,\ldots,p$}
+						\If {$r(\Hank_{\y,f},\Hank_{\y,l}) < |z_k-c(\Hank_{\y,f},\Hank_{\y,l})|$} \label{step:inclusion_normF}
+							\State{$\y$ no es de clase $\mathcal{Z}$.}
+							\Return
+						\Else
+							\State { $\delta_k = \inf_{\lambda\in\C} \|\Hank_{\y,f}-\lambda  \Hank_{\y,l}\|_2 - |z_{k}-\lambda|$}
+							\If { $\delta_k < 0 $}
+								\State {$\y$ no es de clase $\mathcal{Z}$.}
+								\Return
+							\EndIf
+						\EndIf
+					\EndFor
+					\State {$\y$ pertenece a la clase $\mathcal{Z}$.}
+				\end{algorithmic}
+				\label{Algorithm_CNR}
+			\end{algorithm}		
+			
+			En el caso general, no se puede garantizar la condición $\|\matB\|_2\ge 1$ para tener un rango numérico rectangular no vacío. Sin embargo, un escalado adecuado de la señal $\y$ puede resolver este problema. Por otro lado, dado que cualquier frecuencia compleja $z_i$ de $\y$ también es una frecuencia compleja de $\alpha\y$ para cualquier escalar $\alpha$, el escalado es un recurso posible para aplicar el Teorema \eqref{The:numericalRange} para la clasificación de suma de exponenciales complejas. El factor de escala dependerá del conjunto $\mathcal{Z}$. Se puede pensar que $\alpha$ se selecciona durante el proceso de configuración y se mantiene fijo después. Con el fin de tratar datos con ruido, los algoritmos vistos en el capítulo \eqref{chap:ModeloSumExp} se utilizan para obtener una aproximación de bajo rango de la matriz $\Hank_{\y}$.
+			
+			Como se mencionó en la Proposición \eqref{Prop:numericalRange}, $W_{\|\cdot\|_2}(\cdot,\cdot)$ es un subconjunto de $W_{\|\cdot\|_F}(\cdot,\cdot)$. Sean $c(\Hank_{\y,f},\Hank_{\y,l})$ y $r(\Hank_{\y,f},\Hank_{\y,l})$ el centro y el radio del disco definido en \eqref{Eq:numericalRange5}. Explotando la estructura de $\Hank_{\y,f}$ y $\Hank_{\y,l}$ se obtienen las siguientes expresiones
+			\begin{equation}
+				c(\Hank_{\y,f},\Hank_{\y,l}) = \frac{\sum_{i=0}^{m+n-2}\alpha_iy_{i+1}^*y_i}{\sum_{i=0}^{m+n-2}\alpha_i|y_i|^2},
+				\label{Eq:numericalRange6}
+			\end{equation}
+			
+			\begin{equation}
+				\begin{aligned}
+					r(\Hank_{\y,f},\Hank_{\y,l}) = \bigg[\sum_{i=0}^{m+n-2}\alpha_i|y_{i+1}|^2 - \frac{\big|\sum_{i=0}^{m+n-2}\alpha_iy_{i+1}^*y_i\big|^2}{\sum_{i=0}^{m+n-2}\alpha_i|y_i|^2}\bigg]^{\frac{1}{2}}\times\sqrt{\frac{\sum_{i=0}^{m+n-2}\alpha_i|y_i|^2-1}{\sum_{i=0}^{m+n-2}\alpha_i|y_i|^2}}
+				\end{aligned}
+				\label{Eq:numericalRange7}
+			\end{equation}
+			
+			Cualquier $z$ talque $|z-c(\Hank_{\y,f},\Hank_{\y,l})|>r(\Hank_{\y,f},\Hank_{\y,l})$, no pertenece a $W_{\|\cdot\|_F}(\Hank_{\y,f},\Hank_{\y,l})$. Por lo tanto, $z\notin W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$. En el Algoritmo \eqref{Algorithm_CNR} se incluye esta simple verificación para rechazar rápidamente las frecuencias candidatas fuera de $W_{\|\cdot\|_F}(\Hank_{\y,f},\Hank_{\y,l})$. Siguiendo el Teorema \eqref{The:numericalRange}, para una frecuencia candidata, se calcula
+			\[\delta = \inf_{\lambda\in\C}\|\Hank_{\y,f}-\lambda\Hank_{\y,l}\|_2 - |z-\lambda|.\]
+			Si $\delta<0$, se tiene que $z\notin W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$.
+			
+			Cuando se considera una sola clase candidata, se comete un error de clasificación si $\mathcal{Z}\subset W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$dado que $\y$ no es de la clase $\mathcal{Z}$. Cuando se consideran $\ell$ clases candidatas, se trabaja con $\ell$ conjuntos $\mathcal{Z}_{k}$, $k = 1,\ldots,\ell$. La construcción de cada conjunto depende de las señales a clasificar. Por otro lado, cuando se observa la señal $\y$ correspondiente a la clase $\mathcal{Z}_j$, y se considera la clase candidata $\mathcal{Z}_k$, con $k=j$, se comete un error de clasificación cuando $\mathcal{Z}_k\subset W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$. Esta observación se usará para caracterizar el desempeño del criterio de clasificación.
+			
+	\section{Rango numérico para señales ruidosas}
+		
+		La señal observada tiene un componente de ruido que alterará los límites de $W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$. En general, un nivel de ruido grande tiende a expandir el rango numérico. Para mitigar este problema, se realiza una aproximación de bajo rango manteniendo la estructura Hankel, paso \ref{step:lro_Hankel} en el Algoritmo \eqref{Algorithm_CNR}. 
+		
+		A continuación, se analizará un ejemplo particular para mostrar la relevancia de este procedimiento, estudiando el comportamiento de $W_{\|\cdot\|_F}(\Hank_{\y,f},\Hank_{\y,l})$ para diferentes niveles de ruido.
+			
+		Se construye la suma de exponenciales complejas usando el siguiente conjunto,
+		\begin{equation}
+			\setZ_1 = \big\{0.447\pm 0.582\jmath; 0.445\pm 0.578\jmath; 0.423\pm 0.587\jmath; 0.416\pm 0.596\jmath; 0.387\pm 0.586\jmath\big\}.
+			\label{Eq:Set_z}
+		\end{equation}
+		El término de ruido es un proceso blanco Gaussiano con varianza conocida. La relación señal/ruido (SNR) se define como la relación entre la potencia de señal y la potencia del ruido. Para cada SNR, se realizan corridas de Monte Carlo de 1000 realizaciones. Para cada señal ruidosa se calculan \eqref{Eq:numericalRange6} y \eqref{Eq:numericalRange7}. La aproximación de bajo rango preservando la estructura Hankel se usa el algoritmo \cite{Grussler2018} explicado el capítulo \ref{chap:ModeloSumExp}.
+			
+		Las Figuras \eqref{Fig:center_NR} y \eqref{Fig:radii_NR} muestran el promedio de las distintas realizaciones de $c(\Hank_{\y,f},\Hank_{\y,l})$ y $r(\Hank_{\y,f},\Hank_{\y,l})$ en función de la SNR.
+			
+		\begin{figure}[ht]
+			\centering
+			\resizebox{0.5\linewidth}{!}{\input{Figuras/NR_center.pgf}}
+			\caption{$c(\Hank_{\y,f},\Hank_{\y,l})$en función de la SNR, con/sin aproximación de bajo rango con estructura Hankel.}
+			\label{Fig:center_NR}
+		\end{figure}
+			
+		Se observa de las Figuras  \eqref{Fig:center_NR} y \eqref{Fig:radii_NR} que $W_{\|\cdot\|_F}(\Hank_{\y,f},\Hank_{\y,l})$ se agranda a medida que la SNR se deteriora. Por ejemplo, el valor esperado de $r(\Hank_{\y,f},\Hank_{\y,l})$ crece a medida que aumenta la potencia de ruido. Sin embargo, el efecto se reduce cuando se realiza la aproximación de bajo rango manteniendo la estructura Hankel de $\Hank_{\y}$. Asimismo, el centro $c(\Hank_{\y,f},\Hank_{\y,l})$ permanece cerca de su valor sin ruido cuando se realiza la aproximación de bajo rango. En general, el procedimiento de la reducción de rango contribuye a mitigar el efecto del ruido sobre los límites del rango numérico. Dado que $W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$ es un subconjunto de $W_{\|\cdot\|_F}(\Hank_{\y,f},\Hank_{\y,l})$ se obtienen conclusiones similares para el rango numérico definido con la norma espectral. Esta es una característica importante, ya que el proceso de clasificación está definido por el conjunto $W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$ y su capacidad para encerrar las frecuencias complejas de una clase y dejar a fuera las frecuencias complejas de otras clases.
+		\begin{figure}[ht]
+			\centering
+			\resizebox{0.5\linewidth}{!}{\input{Figuras/NR_radii.pgf}}
+			\caption{$r(\Hank_{\y,f},\Hank_{\y,l})$en función de la SNR, con/sin aproximación de bajo rango con estructura Hankel.}
+			\label{Fig:radii_NR}
+		\end{figure}
+			
+	\section{Resultados Numéricos}
+		\subsection{Test de cociente de verosimilitud}
+		
+			Usando la descripción estadística $y_k$, se formula un problema de Test de Hipótesis y resolverlo usando el cociente de verosimilitud. 
+			
+			Sea la señal observada $y_k$ perteneciente a la clase $\setZ_1$, y considere otra clase $\setZ_2$ como la clase candidata. Cada señal perteneciente a su respectiva clase tiene sus propios residuos asociados. De tal forma que los vectores $\c_1$ y $\c_2$ están relacionados con las clases $\setZ_1$ y $\setZ_2$ respectivamente. En general, $\c_1$ y $\c_2$ son vectores desconocidos. Para mejorar la clasificación se formula un test de verosimilitud (GLRT) como en \cite{Mooney1998}: Dado $\setZ_1= \big\{
+			z_{i,1}, i=1,\ldots,p\big\}$ y $\setZ_2= \big\{z_{i,2}, i=1,\ldots,p\big\}$, y la señal observada $\y = \big[y_0,\ldots,y_{m+n-2}\big]^T$, se definen las siguientes hipótesis
+			\[ \mathbb{H}_i : \begin{bmatrix} y_1 \\[0.3em] \vdots\\[0.3em] y_{m+n-2}
+			\end{bmatrix}= \matZ_i\begin{bmatrix} c_{1,i} \\[0.3em] \vdots\\[0.3em] c_{p,i}
+			\end{bmatrix}, \text{ donde } \matZ_i = \begin{bmatrix} z_{1,i}^0 & \cdots & z_{p,i}^0\\[0.3em] & \vdots & \\[0.3em] z_{1,i}^{m+n-2} & \cdots & z_{p,i}^{m+n-2},
+			\end{bmatrix}\]
+			es una matriz formada con las frecuencias complejas asociadas a $\setZ_1$ y $\setZ_2$ respectivamente. En este caso $z_{k,i}$, con $k=1,\ldots, p$ e $i=1,2$ son frecuencias conocidas. De esta manera el test de verosimilitud es
+			\[\frac{\max_{\c_1}p(\y\mid\mathbb{H}_1)}{\max_{\c_2}p(\y\mid\mathbb{H}_2)}\quad \begin{aligned} & \mathbb{H}_1 \\[-5pt]
+			& \gtreqless\\[-5pt]
+			& \mathbb{H}_2
+			\end{aligned} \quad 1.\]
+			
+			Para testear el procedimiento de clasificación, se construye la señal observada, $\y\in\C^{m+n-1}$ a partir de la clase $\setZ_1$ para diferentes relaciones señal/ruido. Para cada SNR, se selecciona un factor de escala adecuado según el Algoritmo \eqref{Algorithm_CNR}. Además, se considera la clase candidata,
+			\begin{equation}
+				\setZ_2 = \big\{0.043\pm 0.0825\jmath; -0.413\pm 0.117\jmath;-0.312\pm 0.213\jmath;-0.195\pm 0.364\jmath -0.338\pm 0.125\jmath \big\}.
+				\label{Eq:Set_Z2}
+			\end{equation} 
+			
+			\begin{figure}[t]
+				\centering
+				\begin{subfigure}[t]{0.23\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/Rect_NR_signal_1_SNR5.0dB.pgf}}
+					\caption{ SNR = 5dB.}
+					\label{Fig:A1_B1_5dB} 
+				\end{subfigure}
+				~
+				\begin{subfigure}[t]{0.23\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/Rect_NR_signal_1_SNR10.0dB.pgf}}
+					\caption{SNR = 10dB.}
+					\label{Fig:A1_B1_10dB} 
+				\end{subfigure}
+				~				
+				\begin{subfigure}[t]{0.23\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/Rect_NR_signal_1_SNR20.0dB.pgf}}
+					\caption{SNR = 20dB.}
+					\label{Fig:A1_B1_20dB} 
+				\end{subfigure}
+				~
+				\begin{subfigure}[t]{0.23\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/Rect_NR_signal_1_SNR30.0dB.pgf}}	
+					\caption{SNR = 30dB.}
+					\label{Fig:A1_B1_30dB} 
+				\end{subfigure}
+				\caption{Rango numérico $W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$ para distintas SNR. Los conjuntos $Z_1 (\text{azul }\times)$, $Z_2(\text{rojo }+)$.}
+				\label{Fig:A1_B1}
+			\end{figure}
+			
+			En la Figura.~\ref{Fig:A1_B1} se muestra una realización particular de $W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$ para diferentes SNRs. También se muestran a la figura los conjuntos $\setZ_1$ y $\setZ_2$. Se puede apreciar que $\setZ_1\subset W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$ para las distintas relaciones señal/ruido. Para estos casos el conjunto $\setZ_2$ está cercano a la frontera de $W_{\|\cdot\|_2}(\Hank_{\y,f},\Hank_{\y,l})$, pero no está incluido dentro de él. Sin embargo, este no puede ser el caso para todas las realizaciones. Por lo que se esperan clasificaciones erróneas sobre esas realizaciones.
+			
+			Para comparar el rendimiento de CNR y GLRT se calculan la tasa de error. En la figura \ref{Fig:Comparation_MPM_RNR} se muestras los resultados. Para SNR bajas, entre -5dB a 0dB, tanto el GLRT como CNR tienen rendimientos similares. Sin embrago, cuando la SNR aumenta, hay aproximadamente 2dB de diferencia entre ambos métodos.
+			
+			\begin{figure}[ht]
+				\centering
+				\includegraphics[width = 0.6 \textwidth]{Figuras/Error_rate_signal_2_VS_set_1_low_snr}
+				\caption{Tasa de error para la señal observada  $\y_t\in Z_1$ y conjunto de clasificación $Z_2$.}
+				\label{Fig:Comparation_MPM_RNR}
+			\end{figure}
+			
+			
+
+			Finalmente, como se vio a lo largo del trabajo, las matrices que conforman el haz suelen estar mal condicionadas, lo que puede causar que el rango numérico asociado al haz sea muy grande y la clasificación se deteriore. Por lo tanto, a futuro se debe trabajar en rediseñar la estrategia de clasificación. Una alternativa es usar el Pseudoespectro de una matriz en lugar del rango numérico. El Pseudoespectro es un conjunto que ``muestra'' como se mueven los autovalores bajo cierta perturbación. Si bien este conjunto suele ser una mejor aproximación del espectro que el rango numérico, el Pseudoespectro muchas veces suele ser un conjunto no convexo, por lo que definir estrategias de clasificación puede ser un desafío. 
+			 
+			
+						
+			
+		
+		
+	
+			
+	
+		
+	
