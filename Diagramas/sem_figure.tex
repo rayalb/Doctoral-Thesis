@@ -1,0 +1,54 @@
+\tdplotsetmaincoords{5}{30}
+\pgfmathsetmacro{\rvec}{.9}
+\pgfmathsetmacro{\thetavec}{45}
+\pgfmathsetmacro{\phivec}{60}
+
+\begin{tikzpicture}
+
+	\begin{scope}[rotate around y = -10]
+	
+	\draw[->] (-1,0,0) node[above] {\LARGE$y$} -- (3, 0 ,0);
+	\draw[->] (0,0,0) -- (0,2,0) node[above] {\LARGE$z$};
+	\draw[->] (0,0,0) -- (0,0,2) node[left] {\LARGE$x$};
+
+	\draw[black!30!yellow, ultra thick] plot[domain=0:2.5, samples = 200](\x,{cos(deg(pi*\x))},0);
+	\draw[blue, ultra thick] plot[domain = 0:2.5, samples = 200](\x,0,{cos(deg(pi*\x))});
+	
+	\foreach \x in {0.1, 0.3, ...,2.4}{
+		\draw[->, help lines, black!30!yellow](\x, 0, 0) -- (\x, {cos(deg(pi*\x))},0);
+		\draw[->, help lines, blue](\x,0,0) -- (\x,0,{cos(deg(pi*\x))});
+	}
+	
+	\node[black!30!yellow, above right] at (0,1,0) {$\matE$};
+	\node[below, blue] at (0,0,1) {$\matH$}; 
+	\end{scope}
+	
+	\draw (3.5,0) node {\Huge $\boldsymbol{+}$};
+	\shadedraw[ball color = green] (5,0) circle (\rvec);
+	\draw (6.5,0) node {\Huge $\boldsymbol{=}$};
+	\draw[<-,black, ultra thick] plot[domain=7.3:9.5, samples = 200](\x,{-exp(-10*(\x-8.4)*(\x-8.4))*(\x-8.4)*8},0) node[below] at (8.5,-1.1){$\begin{array}{cc}\textbf{Respuesta} \\ \textbf{temprana}\end{array}$};
+	
+	\draw (10.0,0) node {\Huge $\boldsymbol{+}$};
+	\coordinate (P) at (12,0);
+	\filldraw[color=black, fill=blue!10, very thick] (P) circle (\rvec);
+	\foreach \x  in {0,...,11} {
+		 \coordinate (N\x) at ($(P)+(\x*360/11:\rvec)$);
+		 \node (\x) at (N\x) {};
+		 };
+	\draw[->, dashed] (N7) -- (N10);
+	\draw[->, dashed] (N10) -- (N6);
+	\draw[->, dashed] (N6) -- (N11);
+	\draw[->, dashed] (N11) -- (N5);
+	\draw[->, dashed] (N5) -- (N1);
+	\draw[->, dashed] (N1) -- (N4);
+	
+	\draw[red, thick, <-] (11-0.3,0) -- (11,0);
+	\draw[red] (11+\rvec+0.1,0)+(170:\rvec+0.1) arc (170:-180:\rvec+0.1) node[black, below] at (12,-1.1){$\begin{array}{cc}\textbf{Respuesta} \\ \textbf{tardía}\end{array}$};
+		
+	
+	
+	
+	
+	
+	
+\end{tikzpicture}

@@ -1,0 +1,24 @@
+\begin{tikzpicture}[cross/.style={path picture={ 
+	\draw[black] (path picture bounding box.south east) -- (path picture bounding box.north west) (path picture bounding box.south west) -- (path picture bounding box.north east);
+	}}]
+  
+	\node[rectangle, align=center] (fm) at (-2, 0) {$y_k$} ;
+	
+  	
+  	
+	\node[rectangle, align=center] (cos) at (-1, -0.9) {\\ $e^{-\jmath\nu_c}$};
+	
+	\node[circle, draw, cross, thick]  (mul1) at (-1, 0) {};
+	\node[rectangle, draw, thick] (dwsample) at (2.5, 0) {$\downarrow Q$};
+	\node[rectangle, draw, thick, align=center] (lp1) at (0.7, 0.0) {\tikz \draw[x=3.5ex, y=1ex, thick] (0, 0) sin (0.5, 0.5) cos (1, 0) sin (1.5, -0.5) cos (2, 0) (0.6, -0.5) -- (1.4, 0.5);\\ \tikz \draw[x=3.5ex, y=1ex, thick] (0, 0) sin (0.5, 0.5) cos (1, 0) sin (1.5, -0.5) cos (2, 0);};
+	\node[rectangle, draw, thick] (alg) at (4.9, 0) {\scriptsize{$\begin{array}{ccc} \text{Algoritmo} \\ \text{Estimación} \\ \text{Espectral}\end{array}$}};
+	\node[rectangle, align=center] (hatfreq) at (7.1, 0) {$\begin{aligned} & \hat{\nu}_i, \hat{\gamma}_i \\ &i = 1,\ldots, n\end{aligned}$};
+	
+	\draw[thick, -stealth] (cos) -- (mul1);
+	\draw[thick, -stealth] (fm) -- (mul1);
+	\draw[thick, -stealth] (mul1) --node[above]{$y^{bb}_k$} (lp1);
+	\draw[thick, -stealth] (lp1) -- (dwsample);
+	\draw[thick, -stealth] (dwsample) --node[above]{${y}_k^{bb,D}$} (alg);
+	\draw[thick, -stealth] (alg) -- (hatfreq);
+
+\end{tikzpicture}

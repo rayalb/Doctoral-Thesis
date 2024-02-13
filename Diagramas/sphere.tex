@@ -1,0 +1,38 @@
+
+\tdplotsetmaincoords{60}{115}
+\pgfmathsetmacro{\rvec}{.5}
+\pgfmathsetmacro{\thetavec}{45}
+\pgfmathsetmacro{\phivec}{60}
+
+\begin{tikzpicture}[scale = 5, tdplot_main_coords]
+	
+	\shadedraw[tdplot_screen_coords, ball color = white] (0,0) circle (\rvec);
+	
+	\coordinate (O) at (0,0,0);
+	
+	
+	\tdplotsetcoord{P}{\rvec + 1}{\thetavec}{\phivec}
+	\draw[thick, ->] (0,0,0) -- (1.40,0,0) node[anchor = north east]{\LARGE$x$};
+	\draw[thick, ->] (0,0,0) -- (0,1.10,0) node[anchor = north west]{\LARGE$y$};
+	\draw[thick, ->] (0,0,0) -- (0,0,1.10) node[anchor = south]{\LARGE$z$};
+	
+	
+	\draw[-stealth, color = black] (O) -- (P) node[at end, above] {\LARGE$r$};
+	\draw[dashed, color = black] (O) -- (Pxy);
+	\draw[dashed, color = black] (P) -- (Pxy);
+	
+	\tdplotsetcoord{Q}{\rvec+0.05}{\thetavec}{-\phivec}
+	\draw[-stealth, color = black] (O) -- (Q) node[midway, above]{\LARGE$a$};
+	
+	\tdplotdrawarc[->]{(O)}{0.2}{0}{\phivec}{anchor = north}{\LARGE$\phi$};
+	
+	\tdplotsetthetaplanecoords{\phivec}
+	\tdplotdrawarc[->,tdplot_rotated_coords]{(0,0,0)}{0.3}{0}{\thetavec}{anchor=south west}{\quad\LARGE$\theta$}
+	
+	\draw[-stealth, ->, line width=4pt] (0,0,-1) -- (0,0,-0.7) node[midway, right]{ \LARGE Campo incidente};
+	
+	\node[anchor = north] at (0.5,0.0,1.0) {\LARGE $\varepsilon_1,\mu_1$};
+	
+	\node[anchor = north] at (0.4,-0.1,0.3) {\LARGE $\varepsilon_2,\mu_2$};
+	
+\end{tikzpicture}
