@@ -1,0 +1,513 @@
+\chapter{Orden del Modelo}\label{chap:OrdenModelo}
+
+
+	\section{Introducción}
+ 	Considerando el modelo de exponenciales definida en \eqref{Eq:Eq:NoiselessSignal}, una estimación adecuada del orden del modelo es clave para una estimación precisa de las resonancias $z_i$. El objetivo es estimar $r$ utilizando las muestras $y_k$, $k = 0,1,\ldots,N-1$.
+
+	Sea la secuencia infinita de números complejos asociada a la suma de exponenciales complejas definida en \eqref{Eq:Eq:NoiselessSignal}. A esta secuencia se le asocia una matriz infinita con estructura Hankel, $\Hank_{\x}$, donde $\big[\Hank_{\x}\big]_{ij} = (x_{i+j-1})$. Se define la función
+	\begin{equation}
+		f(z) = \sum_{k=1}^\infty x_k z^{-k}
+		\label{Eq:SymbolHankel}
+	\end{equation}
+	como el símbolo del operador de Hankel $\Hank_{\x}$. De esta forma se reescribe el Teorema de Kronecker visto en el capítulo \eqref{chap:ModeloSumExp} como
+
+	\begin{theorem}[\cite{Fuhrmann2011}]\label{Th:Kronecker2}
+		Una matriz de Hankel infinita $\Hank_{\x}$ presenta rango finito si y sólo si su símbolo $f(z)$ es una función racional
+		\begin{equation}
+			f(z) = \frac{p(z)}{q(z)},
+			\label{Eq:RationalFunction}
+		\end{equation}
+		donde $p(z)$ y $q(z)$ son polinomios coprimos, y $r$ es el grado del polinomio $q(z)$
+	\end{theorem}
+	\begin{proof}
+		ver \cite{Fuhrmann2011}
+	\end{proof}
+	Sea $\Hank_{\x}^{(n)}$ la submatriz principal de $n\times n$ obtenida a partir de $\Hank_{\x}$. Luego, $\rank(\Hank_{\x}^{(n)}) = r$ para cualquier $n\geq r$.
+
+\subsection{Aproximaciones de Padé}
+		La aproximación de Padé de $f(z)$ de ordenes $[\nu,\mu]$ se define como la forma irreducible de la función racional
+	\begin{equation}
+		R_{\nu,\mu} = \frac{\sum_{k=0}^{\nu}a_kz^k }{\sum_{k=0}^{\mu}b_kz^k}
+		\label{Eq:PadeApprox}
+	\end{equation} que satisface
+	\begin{equation}
+		\sum_{j=0}^{k}x_jb_{k-j}-a_k = 0, \quad k = 0,1,\ldots, \nu+\mu,
+		\label{Eq:PadeApprox1}
+	\end{equation}
+	donde $b_k = 0$ para $k<0$ y $a_k = 0$ para $k>\nu$. Se puede demostrar que el símbolo $f(z)$ en \eqref{Eq:RationalFunction} es una función racional donde el grado del polinomio del numerador es $r-1$ y el grado del polinomio del denominador es $r$. Por lo tanto, el problema de encontrar el modelo del orden $r$  es equivalente a resolver es equivalente a encontrar una aproximación de Padé $R_{r-1,r}$.
+
+\subsection{Propiedad de Invarianza de la Matrices Hankel}
+
+A partir de la teoría de polinomios ortogonales \cite{Szego1939} el polinomio $q(z)$ de grado $r$ in \eqref{Eq:RationalFunction} se escribe como
+\begin{equation}
+	q(z) = d_r\det\begin{bmatrix} \Hank_{\x} & \mathbf{z}\end{bmatrix}
+	\label{Eq:OrthPoly}
+\end{equation}
+donde $\mathbf{z} = [1\,\, z \,\,\cdots\, z^r]^T$. La constante $d_r$ es arbitraria y depende de la normalización de $q(z)$. La matriz $\Hank_{\x}$ es una matriz de Hankel de $(r+1)\times r$ construida a partir de las muestras $x_0, x_1,\ldots, x_{2r-1}$. El determinante en \eqref{Eq:OrthPoly} se puede transformar multiplicando la $j-$ésima fila por $-z$ y sumandole la $(j+1)-$ésima fila para $j=r,r-1,\ldots,1$. De esta forma se obtine
+\begin{equation}
+	q(z) = \det\big(z\Hank_{\x,l}-\Hank_{\x,f}\big)
+	\label{Eq:detPencil}
+\end{equation}
+donde $\Hank_{\x,l}$ y $\Hank_{\x,f}$ son matrices construidas a partir de $\Hank_{\x}$ borrando la última y primer fila respectivamente. El conjunto $\big\{z\Hank_{\x,l}-\Hank_{\x,f};z\in\C\big\}$ se conoce como haz de matrices. Usando el teorema~\ref{Th:Kronecker2} y \eqref{Eq:detPencil}, se observa que el haz de matrices tiene r soluciones y satisface la siguiente proposición
+\begin{prop}\label{Prop:Invariance}
+	Sea $\Hank_{\x}$ una matriz de Hankel construida a partir de las muestas $x_0, x_1,\ldots,\x_{2n-1}$, con $n\geq r$. Luego, existen $\big\{\v_1,\cdots,\v_r\big\}$ linealmente independientes, de modo que
+	\begin{equation}
+		\Hank_{\x,f}\v_i = z_i\Hank_{\x,l}\v_i 
+		\label{Eq:Invariance}
+	\end{equation}
+\end{prop}
+La ecuación \eqref{Eq:Invariance} se conoce como el principio de invarianza rotacional.
+
+
+\section{Reglas para la selección del modelo}\label{sec:review}
+
+Considerando una matriz de Hankel finita de $n\times n$ construida a partir de las muestras $x_0, x_1, \ldots, x_{2n-2}$. Su descomposición en valores singulares resulta ser
+\begin{equation}
+	\Hank_{\x} = \matU\Lambdab\matV^H
+	\label{Eq:SVD}
+\end{equation}
+donde $\Lambdab = \diag(\lambda_1,\lambda_2,\ldots,\lambda_n)$ es una matriz diagonal con los valores singulares ordenados en forma decrecientes. Dado que $\x$ solo se observa a través de $\y$, también se introduce la SVD de la señal ruidosa,
+\begin{equation}
+	\Hank_{\y} = \matQ\Sigmab\matP^H
+	\label{Eq:SVD_noisy}
+\end{equation}
+donde $\Sigmab = \diag(\sigma_1,\sigma_2,\ldots,\sigma_n)$ es una matriz diagonal, con $\sigma_i$ valores singulares ordenados de forma decreciente. Claramente, $\Hank_{\y} = \Hank_{\x} + \Hank_{\w}$, donde $\Hank_{\w}$ es una matriz de Hankel asociada al vector de ruido $\w$.
+
+\subsection{Estructura algebraica de la señal}
+
+Los métodos de estimación espectral como el MPM o ESPRIT \cite{Razavilar1998} explotan el principio de invarianza \eqref{Eq:Invariance}. Al considerar el caso sin ruido, usando \eqref{Eq:SVD}, se define $\matU(s) = \big[\u_1,\ldots,\u_s\big]$ como la matriz que contiene los primeros $s$ vectores singulares $\u_i$. Comprensiblemente, $\matU(r)$ genera el subspacio de señal. Definiendo las siguiente matrices
+\begin{equation}
+	\begin{aligned} 
+		& \matU_f(s) = \begin{bmatrix} \mathbf{0}_{(n-1)\times 1} & \matI_{n-1}\end{bmatrix}\matU(s), \quad
+		\matU_l(s) = \begin{bmatrix}  \matI_{n-1} & \mathbf{0}_{(n-1)\times 1} \end{bmatrix}\matU(s).
+	\end{aligned}
+	\label{Eq:matrices_lf}
+\end{equation}
+Usando \eqref{Eq:Invariance}, se construye el siguiente haz matricial
+\begin{equation}
+	\matU_f(r) = \matU_l(r)\boldsymbol{\Phi},
+	\label{Um:eq}
+\end{equation}
+donde  $\Phib \in \C^{r \times r}$ es una matriz nosingular. A continuación, considerando
+
+\begin{equation}
+	\matE(s) = \matU_f(s) - \matU_l(s)\matU_l(s)^\dagger\matU_f(s).
+	\label{eq:rhatESTER}
+\end{equation}
+Claramente, cuando $s=r$, $\matE(s)= \mathbf{0}$.
+
+Los autores en \cite{Badeau2006} proponen el método ESTimation Error Rule (ESTER) para estimar $r$ mediante la minimización del función $\matE(s)$, es decir,
+\begin{equation}
+	\hat{r}_{\mathrm{ESTER}} = \arg\min_s\|\matE(s)\|_2.
+	\label{Eq:ESTER_Rule}
+\end{equation}
+
+Una propuesta alternativa es propuesta en \cite{Papy2007}, donde los autores consideran la matriz aumentada de $n\times 2s$
+\[ \matE_{aug}(s) = \big[\matU_f(s)\ \matU_l(s)\big].\]
+Sea $\gamma_1\ge\cdots\gamma_{2s}$ los valores singulares de $\matE_{aug}(s)$. Cuando $s\ge r$, $\gamma_{r+1} = \cdots =\gamma_{2s} = 0$. La técnica SAMOS (Subspace based Automatic Model Order Selection) estima el orden del modelo $r$ como la solución del siguiente problema de optimización
+\begin{equation}
+	\hat{r}_{\mathrm{SAMOS}} = \arg\min_s\frac{1}{s}\sum_{i=s+1}^{2s} \gamma_i. 
+	\label{eq:rhatSAMOS}
+\end{equation}
+
+De acuerdo a \eqref{Um:eq} $\matU_l(r)$ y $\matU_f(r)$ generan el mismo subespacio. Por lo tanto, la distancia entre los espacios columna de estas dos matrices proporciona un elemento clave para poder estimar $r$. Como medida para medir la proximidad entre dos subespacio se utilizarán los ángulos principales entre subespacios. A continuación se reproduce la definición de ángulos principales y un resultado, ambos tomados de \cite{Stewart1990}.
+
+\begin{definition}\label{def:principalAngles}
+	Sean $\setX$, $\setY$ dos subespacios con $\dim(\setX) = \dim(\setY)=s$. Los ángulos principales entre $\setX$ y $\setY$ son
+	\begin{equation*}
+		\Thetab(\setX,\setY) = \big[\theta_1, \ldots, \theta_s\big],\quad \theta_k\in[0,\pi/2],\quad k=1,\ldots,s
+	\end{equation*}
+	definidos por
+	\begin{equation}
+		\cos\theta_k = \max_{\stackrel{\x\in\setX}{\y\in\setY}}\bigg\{\frac{|\langle\x,\y\rangle|}{\|\x\|_2\|\y\|_2} : \x^H\x_i = 0,\ \y^H\y_i = 0,  \forall i\in\{1,\ldots,k-1\}\bigg\}.
+		\label{Eq:principalAngles2}
+	\end{equation}
+\end{definition}
+
+%Usando el concepto de ángulos principales, se formulan los siguiente resultados.
+
+\begin{theorem}\label{The1:ESTER_GAP}
+	Sea $\theta_1(s),\ge\cdots\ge\theta_s(s)$ los ángulos principales entre los subespacios generados por los vectores columnas de $\matU_f(s)$ y $\matU_l(s)$. Luego,
+	\begin{equation}
+		\|\matE(s)\|_2  \le \sin\theta_1(s)
+		\label{Eq:ESTERBound}
+	\end{equation}
+\end{theorem}  
+\begin{proof} Considerando la descomposición polar de $\matU_f(s)$ y $\matU_l(s)$
+	\begin{equation}
+		\begin{aligned}
+			& \matU_f(s) = \hat{\matU}_f(s)\big(\matI_s -         \u_f^H\u_f\big)^{\frac{1}{2}}\\
+			& \matU_l(s) = \hat{\matU}_l(s)\big(\matI_s -         \u_l^H\u_l\big)^{\frac{1}{2}}
+		\end{aligned}
+		\label{Eq:nearest_Orthonormal}
+	\end{equation}
+	donde $\u_f\in\C^{1\times s}$ ($\u_l\in\C^{1\times s}$) es la primera (última) fila de $\matU(s)$, y $\hat{\matU}_f(s)$ y $\hat{\matU}_l(s) $ son matrices de $(m-1)\times s$, ambas con columnas ortonormales. Las proyecciones ortogonales sobre los espacio columna de  $\matU_f(s)$ y $\matU_l(s)$ son:  
+	\begin{equation}
+		\begin{aligned}
+			& \matProj_f(s) = \matU_f(s)\matU_f(s)^\dagger = \hat{\matU}_{f}(s)\hat{\matU}_{f}^H(s) \\
+			& \matProj_l(s) = \matU_l(s)\matU_l(s)^\dagger = \hat{\matU}_{l}(s)\hat{\matU}_{l}^H(s),
+		\end{aligned}
+		\label{Eq:ProjMatrix}
+	\end{equation}
+	donde $\matU_l(s)^\dagger$ es la pseudo-inversa de Moore-Penrose. 
+	Dado que $\hat{\matU}_f$ y $\hat{\matU}_l$ tienen columnas ortonormales, sea
+	\[\begin{aligned} \|\hat{\matE}(s)\|_2 & = \|\hat{\matU}_{f}(s) -\hat{\matU}_{l}(s)\hat{\matU}_l^H(s)\hat{\matU}_f(s)\|_2 \\\ & = \|\left(\hat{\matU}_{f}(s)\hat{\matU}_{f}^H(s) -\hat{\matU}_{l}(s)\hat{\matU}_l^H(s)\right)\hat{\matU}_f(s)\|_2\\
+		&  = \|\matProj_f(s) - \matProj_l(s)\|_2 = \sin \theta_1(s)
+	\end{aligned}
+	\]
+	donde en la última igualdad se uso la Proposición \ref{Prop:GapDistance}. Luego,
+	\begin{equation}
+		\begin{aligned} \|\matE(s)\|_2 & = \|\matU_{f}(s) -\matU_{l}(s)\matU_l(s)^\dagger\matU_f(s)\|_2 \\
+			&\le \|\matProj_f(s) - \matProj_l(s)\|_2\|\matU_f(s)\|_2 = \|\matU_f(s)\|_2\sin \theta_1(s). \end{aligned}
+		\label{Eq:ESTER_gap_Theo}
+	\end{equation}
+	Dado que $\matU_f(s)$ es una submatriz de la matriz unitaria $\matU$, sus valores singulares serán como máximo iguales a 1. Por lo tanto,  usando $\|\matU_f(s)\|_2\leq 1$ se obtiene \eqref{Eq:ESTERBound} . \end{proof}
+
+
+\begin{theorem}\label{The1:SAMOS}
+	Sea $\gamma_1\ge\cdots\ge\gamma_{2s}$ los valores singulares de $\matE_{aug}(s)$. Luego,
+	\begin{equation}
+		\frac{1}{s}\sum_{i=s+1}^{2s}\gamma_i\le \sqrt{2}\left[1+\frac{1}{s}\sum_{i=1}^s\sin\frac{\theta_{i}(s)}{2}\right].
+		\label{eq:Angle_Weyl}
+	\end{equation}
+\end{theorem}
+\begin{proof}
+	Recordando que $\matU_f(s)$ es una matriz de rango completo, las matrices $\matU_f(s)$ y $\hat{\matU}_f(s)$ generan el mismo espacio columna, lo mismo vale para $\matU_l(s)$ y $\hat{\matU}_l(s)$, con $\hat{\matU}_f(s)$ y $\hat{\matU}_l(s)$ definidos en \eqref{Eq:nearest_Orthonormal}. Luego, los ángulos principales entre $\matU_f(s)$ y $\matU_l(s)$ son los mismo que los ángulos entre $\hat{\matU}_f(s)$ y $\hat{\matU}_l(s)$. Definiendo
+	\begin{equation}
+		\hat{\matE}_{aug}(s) = \begin{bmatrix} \hat{\matU}_f(s) & \hat{\matU}_l(s)\end{bmatrix},
+	\end{equation}
+	notar que sus valores singulares se pueden obtener a partir de la matriz $\matI_{2s}+\matM$, donde
+	\[\matM = \begin{bmatrix} \mathbf{0} & \hat{\matU}_f(s)^H\hat{\matU}_l(s)\\[0.3em] \hat{\matU}_l(s)^H\hat{\matU}_f(s) & \mathbf{0}
+	\end{bmatrix}.\]
+	De acuerdo con \cite[Teorema I.5.2]{Stewart1990}, los valores singulares de $\hat{\matU}_f(s)^H\hat{\matU}_l(s)$ ordenados en forma creciente son $\cos\theta_1(s),\ldots,\cos\theta_s(s)$. Luego, a partir de \cite[Teorema 7.3.3]{Horn1990}, los últimos $s$ valores singulares de $\hat{\matE}_{aug}$ ordenados en forma decreciente son
+	\[\sqrt{1-\cos\theta_{i-s}(s)} = \sqrt{2}\sin\frac{\theta_{i-s}(s)}{2}\quad i= s+1,\ldots,2s.\]
+	
+	Sea $\matA = \matU_f(s) - \hat{\matU}_f(s)$ y $\matB = \matU_l(s) - \hat{\matU}_l(s)$, entonces, $\matE_{aug}(s) - \hat{\matE}_{aug}(s) = \left[ \matA\  \matB\right]$. Se puede demostrar que $\hat{\matU}_f(s)$ es la matriz con columnas ortonormales más cercana a  $\matU_f(s)$ \cite{Higham89}. La misma conclusión se obtiene entre $\hat{\matU}_l(s)$ y $\matU_l(s)$. Además,
+	\[\|\matA\|_2 = \max_{i}|\zeta_i-1|,\]
+	donde $\zeta_i$ es el $i$ésimo valor singular más grande de $\matU_f(s)$. Debido a que $\matU_f(s)$ es una submatriz de la matriz unitaria $\matU$ se tiene que  $\zeta_i\le 1$. Por lo tanto, $\|\matA\|_2\le 1$, y de forma similar se deduce que $\|\matB\|_2\le 1$. Luego, por el teorema de Weyl \cite[Teorema 4.11]{Horn1990}, los últimos $s$ valores singulares de $\matE_{aug}(s)$ y $\hat{\matE}_{aug}(s)$ está separados como mucho por $\|\left[ \matA\  \matB\right]\|_2$, es decir, para $i = s+1,\ldots, 2s$,
+	\begin{equation}
+		|\gamma_i -\sqrt{2}\sin\frac{\theta_{i-s}}{2}|\le \|\left[\matA\ \matB\right]\|_2\le \sqrt{\|\matA\|_2^2+\|\matB\|_2^2}\le \sqrt{2}.
+	\end{equation}
+	
+	Usando la desigualdad triangular se obtiene
+	\[\frac{1}{s}\sum_{i=s+1}^{2s}\gamma_i - \frac{1}{2}\sum_{i=s+1}^{2s}\sqrt{2}\sin\frac{\theta_{2s-i+1}(s)}{2} \le \frac{1}{2}\sum_{i=s+1}^{2s}\bigg|\gamma_i - \sqrt{2}\sin\frac{\theta_{2s-i+1}(s)}{2}\bigg|\le \sqrt{2}.\]
+	
+	Finalmente, 
+	\[\frac{1}{s}\sum_{i=s+1}^{2s}\gamma_i\le\sqrt{2}+\frac{1}{s}\sum_{i=1}^s\sqrt{2}\sin\frac{\theta_i(s)}{2}\]
+\end{proof}
+
+A continuación se mostrará de forma experimental que los teoremas \ref{The1:ESTER_GAP} y \ref{The1:SAMOS} proveen cotas superiores ajustadas. Para ello, se simula una suma de $r$ exponenciales complejas, tomando diferentes valores de $r$. Para cada señal, las frecuencias $z_i=e^{2\pi\jmath f_i}$, se eligen tomando $r$ valores distribuidos uniformemente sobre el intervalo $(0,1]$. Las amplitudes complejas, $c_i$, son tomadas a partir de muestras de una distribución uniforme entre $[1, 1.5]$. La Figura \ref{Fig:BoundsAngles} muestra los resultados en función del parámetro $s$. Para evaluar la cota en el Teorema \eqref{The1:ESTER_GAP}, la figura \ref{Fig:ESTER_angles} muestra $\big|\|\matE(s)\|_2 - \rho\big|$. La cota del Teorema \eqref{The1:SAMOS} se analiza en la figura \ref{Fig:SAMOS_angles} donde se muestra $1/s\big|\sum_i(\gamma_{s+i}-\sqrt{2}\sin(\theta_i/2))\big|$. Ambas figuras muestran que las cotas son ajustadas para todo $s$. Además, ambas alcanza un mínimo cuando $s=r$.
+
+\begin{figure}[t]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\resizebox{\linewidth}{!}{\input{Figuras/bounds_ESTER_function.pgf}}
+		\caption{$\big|\|\matE(s)\|_2 - \rho\big|$}
+		\label{Fig:ESTER_angles}
+	\end{subfigure}
+	~
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\resizebox{\linewidth}{!}{\input{Figuras/bounds_SAMOS_function.pgf}}
+		\caption{$\big|\sum_i(\gamma_{s+i}-\sqrt{2}\sin(\theta_i/2))\big|$}
+		\label{Fig:SAMOS_angles} 
+	\end{subfigure} 
+	\caption{Evaluación de las cotas dadas en los Teoremas \eqref{The1:ESTER_GAP} y \eqref{The1:SAMOS}}
+	\label{Fig:BoundsAngles}
+\end{figure}
+
+Cuando $s=r$, el espacio columna de $\matU_f(s)$ y $\matU_l(s)$ están alineados. Por lo tanto, todos los ángulos $\theta_i(s)$, $i = 1,\ldots,s$ son iguales a cero, como consecuencia $\rho(s)=0$, y se obtiene el orden correcto minimizando $\|\matE(s)\|_2$. Siguiendo con este caso, $\rank(\matE_{aug}(s)) = r$, es decir, $\gamma_{s+1} = \cdots = \gamma_{2s}=0$ por lo tanto minimizar \eqref{eq:rhatSAMOS} también es una buena alternativa. Sin embargo, ambas observaciones cuentan con que se conoce  la matriz $\matU$, que solo es posible en el caso sin ruido.
+
+Dado que la matriz $\Hank_{\x}$ solo es observada a través de $\Hank_{\y}$, la matriz $\matU$ no se conoce directamente, por lo que se debe  trabajar con la matriz $\matQ$ y sus submatrices. Usando estas matrices, las funciones de costo usadas en ESTER y SAMOS se definen en consecuencia como
+\[ \mathcal{J}_{\mathrm{ESTER}}(s) = \|\matQ_f(s) - \matQ_l(s)\matQ_l(s)^\dagger\matQ_f\|_2\]
+\[ \mathcal{J}_{SAMOS}(s) = \frac{1}{s}\sum_{i=s+1}^{2s}\varsigma_i.\]
+En esta última ecuación, $\varsigma_i,\ i=1,\ldots,2s$ son los valores singulares de $\left[\matQ_f(s)\ \matQ_l(s)\right]$. Sea $\vartheta_i(s)$, $i=1,\ldots, s$ los ángulos principales entre los subespacios generados por las columnas de $\matQ_l(s)$ y $\matQ_f(s)$ ordenados en forma decreciente. Usando los Teoremas \ref{The1:ESTER_GAP} and \ref{The1:SAMOS} se obtiene
+
+\begin{equation}
+	J_{ESTER}(s) \leq \sin\vartheta_1(s).
+	\label{eq:ESTER_cost}
+\end{equation}
+\begin{equation}
+	J_{SAMOS}(s) \le \sqrt{2} \left[1+ \frac{1}{s}\sum_{i=1}^{s}\sin\frac{\vartheta_{i}(s)}{2}\right].
+	\label{eq:SamosBoundHy}    
+\end{equation}
+
+En \cite{Badeau2006,Papy2007} se mostró que estos dos métodos presentan mejores desempeños que las Criterios de Información, como por ejemplo Akaike o MDL. Sin embargo, estás métodos no presentan buenos desempeños cuando se tienen señales muy ruidosas. Se puede observar que cuando $s$ es cercano a $r$ los ángulos $\vartheta_i(s)$, $i=1,\ldots,s$ son pequeños, y $\sin(\vartheta_i(s))$ es muy sensible a pequeñas perturbaciones. Como consecuencia, tanto ESTER como SAMOS presentan un mal desempeño cuando el nivel de ruido es alto como se observó experimentalmente. Aunque en SAMOS, el promedio mostrado en \eqref{eq:SamosBoundHy} puede reducir el efecto del ruido, no es completamente efectivo cuando se trabaja con relaciones señal-ruido bajas.
+
+\subsection{Perturbaciones haz matricial}
+
+Para el caso particular $s=r$ y se considera que $\matQ_l\matQ_l^\dagger = \matG(\matZ + \delta\matZ)\matG^{-1}$, donde $\delta\matZ$ es una matriz diagonal que contiene la perturbación asociada a cada autovalor y $\matG$ es la matriz de autovectores. Luego, de acuerdo con \eqref{eq:ESTER_cost},
+\begin{equation} J_{ESTER}(r) = \|\matQ_f -\matQ_l\matG(\matZ+\delta\matZ)\matG^{-1}\|_2\le \sin\vartheta_1. \label{eq:Jester_appendix}\end{equation}
+Por otro lado,
+\begin{equation}
+	\begin{aligned} 
+		J_{ESTER}(r) & \ge \frac{1}{\sqrt{r}}\big\|\left[ \matQ_f\ \matQ_l\right]\begin{bmatrix} \matI_r \\ -\matG(\matZ+\delta\matZ)\matG^{-1}\end{bmatrix} \big\|_F\\[0.3em]  & \ge \frac{1}{\sqrt{r}}\sigma_r\bigg(\begin{bmatrix} \matI_r \\ -\matG(\matZ+\delta\matZ)\matG^{-1}\end{bmatrix}\bigg)\sigma_{r+1}\big(\left[ \matQ_f\ \matQ_l\right]\big),
+	\end{aligned}
+	\label{Eq:vartheta2_1}
+\end{equation}
+donde la última desigualdad es debido a \cite[Teo. 2]{WANG1997}. También, usando la descomposición polar \cite{Horn1991}
+\[\left[\matQ_f\ \matQ_l\right] = \left[\hat{\matQ}_f\ \hat{\matQ}_l\right]\begin{bmatrix} \big(\matI_r-\u_f^H\u_f\big)^{\frac{1}{2}} & \mathbf{0} \\[0.3em] \mathbf{0} & \big(\matI_r-\u_l^H\u_l\big)^{\frac{1}{2}} 
+\end{bmatrix},\]
+por \cite{Horn1990} se obtiene
+\begin{equation}
+	\sigma_{r+1}\big(\left[ \matQ_f\ \matQ_l\right]\big)\ge \Delta\sqrt{2}\sin\frac{\vartheta_1}{2}
+	\label{Eq:sigma_r+1}
+\end{equation}
+con 
+\[\Delta = \min\big\{\sqrt{1-\|\u_f\|_2^2}, \sqrt{1-\|\u_l\|_2^2}\big\}. \quad \Delta\in(0,1).\]
+Además, usando el Teorema de Weyl \cite{Horn1991} se obtiene
+\begin{equation}
+	\sigma_r\bigg(\begin{bmatrix} \matI_r \\ -\matG(\matZ+\delta\matZ)\matG^{-1}\end{bmatrix}\bigg)\ge \sqrt{1+\kappa^{-2}\big[\sigma_r(\matZ)-\sigma_1(\delta\matZ)\big]^2}
+	\label{Eq:sigma_r}
+\end{equation}
+donde $\kappa$ es el número de condición de la matriz $\matG$. Luego, remplazando \eqref{Eq:sigma_r+1} y \eqref{Eq:sigma_r} en \eqref{Eq:vartheta2_1} y considerando  \eqref{eq:Jester_appendix}, se obtiene
+\[|\sigma_r(\matZ)-\sigma_1(\delta\matZ)|\le \kappa\sqrt{\frac{2r}{\Delta^2}\cos^2\frac{\vartheta}{2}-1}\]
+Luego, considerando que $\sigma_1(\delta\matZ) = \max_i|\delta z_i|$, $\sigma_r(\matZ) = \min_i|z_i|$, se obtiene
+\[\big|\min_i|z_i|-\max_i|\delta z_i|\big|\le \kappa\sqrt{\frac{2r}{\Delta^2}\cos^2\frac{\vartheta_1}{2}-1}.\]
+
+Finalmente, se obtiene que la perturbación del máximo autovalor esta acotada por
+\begin{equation}
+	|\delta z_{max}|<|z_{min}| + \kappa\sqrt{\frac{2r}{\Delta^2}\cos^2\frac{\vartheta_1}{2}-1}.
+	\label{bound1}
+\end{equation}
+Esta cota permite analizar la sensibilidad de los autovalores de la misma forma que se hizo en el Capítulo \ref{chap:EstabilidadNumerica}. A partir de \eqref{bound1}, es claro que desalineamiento entre los espacios columna de $\Hank_{\y,l}$ y $\Hank_{\y,f}$ contribuye a la perturbación del problema de autovalores generalizados.
+
+\subsection{Brecha entre los valores singulares}
+
+Recordando el Teorema \ref{Th:Kronecker2}, el orden del modelo se puede estimar como el rango de la matriz de Hankel. Para este caso, los autores en \cite{Gonnet2013} aproximan el símbolo de la matriz de Hankel usando una aproximación de Padé de bajo orden. Ellos proponen truncar la descomposición en valores singulares de una matriz asociada con \eqref{Eq:PadeApprox1} estableciendo un unbral definido por el usuario. Para el caso de señales ruidosas, el símbolo asociado a $\Hank_{\y}$ es
+\[\Tilde{f}(z) = \sum_{k=1}^{\infty}(x_k+w_k)z^{-k}.\]
+La teoría de aproximación de Padé garantiza que la secuencia $\{R_{n-1,n}\}_{n\in\N}$ converge a $\Tilde{f}(z)$ en probabilidad para un $n$ suficientemente grande. A medida que se aumenta el grado del polinomio del denominador por encima de $r$, aparecen pares espurios de polos y ceros en la aproximación de Padé. Aunque esto puede resultar en una estimación de ordenes mas grandes, se observó que con los pares de polos y ceros adicionales, se considera de mejor manera el modelo del ruido. Al hacerlo, se amplia la brecha para definir la cantidad de valores singulares relevantes \cite{Cuyt2018}, de manera que el rango real de la matriz de Hankel asociada se revela a medida que $n$ crece. Pruebas para estimar ordenes grandes requieren tener acceso a un número mayor de muestras $y_k$. Sin embargo, esto puede no ser siempre posible. Esta situación empeora a medida que la potencia de ruido aumenta y la distancia entre valores singulares se reduce. Para superar esta situación, en \cite{BRIANI2020}  se propone un algoritmo conocido como VEXPA. Este algoritmo se basa en hacer un decimado por debajo de la frecuencia de Nyquist y utiliza técnicas de agrupamiento para distinguir los polos estables de aquellos que son espurios. Esta estrategia tiene un buen rendimiento de estimación en régimen de alta SNR. Desafortunadamente, el algoritmo requiere establecer varios parámetros que definen críticamente el rendimiento de estimación.
+\subsubsection{VEXPA (Validated EXPonential Analysis)}\label{VEXPA_Appendix}
+
+A continuación se hará una breve descripción del algoritmo VEXPA \cite{BRIANI2020}. Dado un factor de decimación $u$, se considera el modelo 
+\begin{equation}
+	x_{ku} = \sum_{i=1}^r c_iz_i^{ku}, \quad k = 0,\ldots, 2r-1
+	\label{eq:decimatedVEXPA}
+\end{equation}
+De manera que al plantear el problema de autovalores generalizados con las matrices de Hankel asociados a la señal \eqref{eq:decimatedVEXPA}, la autovalores obtenidos serán $z_i^u$, $i=1,\ldots, r$. Si estos autovalores se escriben como $z_i^u = e^{u\xi_iT_s}$, donde $\xi_i\in \C$ y $T_s$ un período de muestreo dado, la parte imaginaria de $\xi_i$ no puede recuperar de forma única, debido a que 
+\[|\Im(u\xi_iT_s)|<u\pi.\]
+De modo que puede a parecer el problema de aliasing. Dada la periocidad de la función $e^{\jmath u\Im(\xi_i)T_s}$ se puede identificar $u$ valores posibles de $\xi_i$ en el intervalo  $(-u\pi,u\pi)$.
+
+El problema de aliasing puede resolverse agregando $r$ muestras a la señal decimada $x_0,x_u,\ldots,x_{(2r-1)u}$, en los puntos desplazados $kuT_s + s T_s$ para $k = h,\ldots,h+r-1$ con $0\le h\le r$. Los números $u$ y $s$ deben ser números mutuamente primos.
+
+De las muestras $x_0,x_u,\ldots,x_{(2r-1)u}$ se obtienen autovalores generalizados $z_i^u$ y coeficientes $c_i$ a partir del sistema lineal \eqref{eq:decimatedVEXPA}. De modo que se obtienen los coeficientes $c_i$ correspondiente a cada $z_i^u$, pero aun no se puede identificar $\Im(\xi_i)$ correcto a partir de $z_i^u$. Sin embargo, las muestras adicionales que se agregan cumplen que 
+\[x_{ku + s} = \sum_{i=1}^r (c_iz_i^{s})z_i^{uk}, \quad k = h,\ldots, h+r-1. \]
+De este sistema se pueden obtener $c_1z_1^{s}, \ldots,c_rz_r^{s}$ asociados a $z_i^u$. Es decir, se obtiene un un conjunto de $s$ valores posibles para $\xi_i$ en el intervalo  $(-s\pi,s\pi)$. Debido a que $s$ y $u$ son números mutuamente primos los dos conjuntos de posibles para $\xi_i$ tienen solo un valor en su intersección. 
+
+De modo que los autovalores generalizados asociados a la señal $x_k$ se agrupan cerca del valor real de $z_i^u$, y similarmente para $z_i^{s}$, mientras que otros autovalores se asocian a realizaciones de ruido y no suelen estar agrupados.  Para encontrar estos cluster de autovalores, VEXPA usa el algoritmo DBSCAN \cite{ester1996}. Es una método de \emph{Clustering} basado en aprendizaje no supervisado. Para útilizar el método DBSCAN, se requieren 2 parámetros: $\delta$ que es la distancia mínima entre dos puntos de una misma clase; y la cantidad mínima de puntos de una clase denotada $m$. 
+
+El algoritmo DBSCAN visita todos los puntos del conjunto de da datos de entrenamiento y los marca como visitados a medida que avanza. Si un punto seleccionado tiene tantos o más vecinos como el número mínimo de puntos, se lo conoce como punto central. Si un punto es central, se inicia la primera clase. Luego, el algoritmo visita a sus vecinos para encontrar otro punto central y lo asigna a la clase. Este paso permite que la clase se expanda. El algoritmo se detiene para expandir la clase cuando se han visitado todos los puntos densamente alcanzable. El algoritmo continúa visitando los puntos no visitados y comenzará una nueva clase si se encuentra otro punto central. Esta clase también se puede ampliar y así sucesivamente. Finalmente, todos los puntos que no están asignados a una clase son puntos de ruido.
+
+	\section{Criterio de información Bayesiana usando aproximación de Laplace ($BIC-lp$)}\label{BIC_Appendix}
+	
+	Una técnica muy empleada para estimar el orden del modelo son los criterios de la información \cite{Stoica2004}. Entre los más conocidos se encuentran el Criterio de información de Akaike, MDL, así como enfoques más reciente desarrollados en \cite{Mariani2015, Nielsen2013}, que garantizan un buen desempeño en el caso asintótico. Sin embargo, para registros de datos pequeños, estos métodos ya no son óptimos y su desempeño se ve deteriorada a medida que disminuye la relación señal a ruido (SNR). En \cite{Nielsen2013}, se propone un enfoque Bayesiano que tiene en cuenta el modelo de suma de exponenciales. A continuación se resume esta técnica
+	
+	Se observan los siguientes datos
+	\begin{equation}
+		\y = \begin{bmatrix} y_0 & y_1 & \cdots & y_{N-1}
+		\end{bmatrix}^T
+		\label{eq:BIC1}
+	\end{equation}
+	que se originaron a partir de un modelo desconocido. Como el modelo real no se conoce, se propone un conjunto de $K$ modelos paramétricos $\setM_1,\setM_2,\ldots,\setM_K$ tal que
+	\begin{equation}
+		\setM_k\quad : \quad \y = \matZ(\vecomega_k)\vecalpha_k + \w,
+		\label{eq:BIC2} 
+	\end{equation}
+	donde $\w\sim\NormalC(\mathbf{0},\sigma^2\matI)$. Los diversos modelos candidatos difieren en términos de $\ell_k$, la cantidad de parámetros en $\vecalpha_k$. La matriz $\matZ(\vecomega_k)$ tiene dimensiones $N\times \ell_k$ y se puede asumir conocida como desconocida.
+	
+	El criterio de información Bayesiana (BIC) es una de las reglas de selección de modelo más  exitosas \cite{Stoica2005}. Para el modelo en \eqref{eq:BIC2}, el BIC se basa en un aproximación de la verosimilitud logaritmica
+	\begin{equation}
+		\ln p(\y \mid \setM_k) = -N\ln(\hat{\sigma}^2) - \ln(|\hat{\setI}_k|) + \mathcal{O}(1)
+		\label{eq:BIC3} 
+	\end{equation}
+	donde $\hat{\sigma}^2$ es el estimador de máxima verosimilitud de la varianza de ruido, y $\hat{\setI}_k$ es la matriz de Fisher observada.
+	
+	Cada modelo $\setM_k$ está parametrizado por los parámetros del modelo $\vectheta = [\vecalpha_k^T\ \vecomega_k^T\ \sigma^2]$. La relación entre los datos $\y$ y el modelo $\setM_k$ viene dado por la función de probabilidad $p(\y\mid \vectheta_k,\setM_k)$. Existen diversas formas del BIC que surgen al ignorar términos de primer orden y considerar el comportamiento de $\hat{\setI}_k$ para varios valores de $N$ y $\hat{\sigma}^2$, así como la estructura de la matriz $\matZ(\vecomega_k)$. 
+	
+	En el marco Bayesiano, los parámetros desconocidos se consideran variables aleatorias. De modo que además de especificar una distribución para el ruido, también se tienen que obtener distribuciones a priori para los parámetros desconocidos, $p(\vectheta_k\mid\setM_k)$ con cierta probabilidad $p(\setM_k)$. Después de observar los datos, se obtienen la distribuciones a posterioris $p(\vectheta_k\mid\y,\setM_k)$ y $p(\setM_k\mid\y)$.
+	
+	\begin{equation}
+		p(\vectheta_k\mid\y,\setM_k) = \frac{p(\y\mid\vectheta_k,\setM_k)p(\vectheta_k\mid\setM_k)}{p(\y\mid\setM_k)},
+		\label{eq:Bic4} 
+	\end{equation}
+	\begin{equation}
+		p(\setM_k\mid \y) = \frac{p(\y\mid\setM_k)p(\setM_k)}{p(\y)},
+		\label{eq:BIC5}
+	\end{equation}
+	donde 
+	\begin{equation}
+		p(\y\mid\setM_k) = \int_{\vectheta_k} p(\y\mid\vectheta_k,\setM_k)p(\vectheta_k\mid\setM_k)\mathrm{d}\vectheta_k
+		\label{eq:BIC6}
+	\end{equation}
+	es la función de verosimilitud. Para estimar el modelo, se comparan las probabilidad de dos modelos distintos $\setM_j$ y $\setM_i$. Es este sentido se definen las probabilidades a posteriori para los modelos como 
+	\begin{equation}
+		\frac{p(\setM_j\mid \y)}{p(\setM_i\mid \y)} = \mathrm{BF}[\setM_j,\setM_i]\frac{p(\setM_j)}{p(\setM_i)}.
+		\label{eq:BIC7}
+	\end{equation}
+	donde 
+	\begin{equation}
+		\mathrm{BF}[\setM_j;\setM_i] = \frac{p(\y\mid\setM_j)}{p(\y\mid\setM_i)} = \frac{m_j(\y)}{m_i(\y)},
+		\label{eq:BIC8}	
+	\end{equation}
+	se conoces como factor de Bayes, y $m_k(\y)$ es la verosimilitud marginal. Reescribiendo la distribución a posteriori del modelo en termino del factor de Bayes, se obtiene  
+	\begin{equation}
+		p(\setM_k\mid\y) = \frac{\mathrm{BF}[\setM_k,\setM_b]p(\setM_k)}{\sum_{i=1}^{K}\mathrm{BF}[\setM_i,\setM_b]p(\setM_i)}
+		\label{eq:BIC9}
+	\end{equation}
+	donde $\setM_b$ es un modelo seleccionado para compara los otros modelos. Por lo tanto, el modelo más probable se encuentra maximizando $\mathrm{BF}[\setM_k; \setM_N ]$ sobre k, donde $\setM_N$ es el modelo de solo ruido ($\ell_k=0$).
+	
+	En \cite{Nielsen2013} se propone un nuevo BIC donde no es necesario investigar el comportamiento de la matriz de Fisher. Esta mejora es consecuencia del uso de un marco completamente Bayesiano en donde se obtienen distribuciones a priori adecuadas para los parámetros lineales. Como la dimensión del vector $\vecalpha_k$ varía entre los diferentes modelos, una distribución a priori adecuada viene dada por \cite{Zellner88}
+	\begin{equation}
+		\boldsymbol{\alpha}_k\mid \sigma \sim \mathcal{CN}(0,g\sigma[\matZ^H(\boldsymbol{\omega})\matZ(\boldsymbol{\omega})]^{-1})
+		\label{eq:BIC10}
+	\end{equation}
+	Luego, la distribución a posteriori del parámetro $\vecalpha_k$ es
+	\begin{equation}
+		p(\vecalpha_k\mid \y, \sigma) \propto \exp\bigg[-(\vecalpha_k-\bar{\vecalpha}_k)^H\Sigmab^{-1}(\vecalpha_k-\bar{\vecalpha}_k)\bigg]
+	\end{equation}
+	donde
+	\begin{equation}
+		\Sigmab = \frac{g\sigma^2}{1+g}[\matZ^H(\vecomega_k)\matZ(\vecomega_k)]^{-1},
+	\end{equation}
+	\begin{equation}
+		\bar{\vecalpha}_k = \frac{g}{1+g}\hat{\vecalpha}_k.
+	\end{equation}
+	Donde $\hat{\vecalpha}_k$ es el estimador de maxima verosimilitud de $\vecalpha_k$. El parámetro $g$ determina intuitivamente cuanto contribuye la distribución a priori de $\vecalpha_k$ a la distribución a posteriori. Por ejemplo si $g=0$, la media de la distribución a posteriori se reduce por completo a la media de la distribución a posteriori; si $g=1$ la media de la distribución a posteriori se reduce a $0.5$ de la media de la a priori. Si $g\to\infty$, la distribución a priori es una distribución no informativa. Si el parámetro $g$ está fijo pero es desconocido, su valor debe seleccionarse con cuidado. También puede tratarse como una variable aleatoria e integrarse a partir de la probabilidad marginal. Se suele utilizar una distribución beta invertida como a priori para $g$. Para el caos de los parámetros no lineales $\vecomega_k$ se suele utilizar una distribución a priori uniforme.
+	
+	Luego, la función de verosimilitud es
+	\begin{equation}
+		\begin{aligned}
+			p(\y\mid\setM_k) = \int_{0}^\infty \int_{0}^\infty \int_{A_k} & p(\y\mid\vecalpha_k,\vecomega_k,\sigma^2,\setM_k)p(\vecalpha_k\mid g,\sigma^2,\vecomega_k,\setM_k) \times \\& \times p(\sigma^2)p(g)p(\vecomega_k\mid\setM_k)\mathrm{d}\vecalpha_k\mathrm{d}\vecomega_kdgd\sigma^2
+		\end{aligned} \label{eq:BIC11}
+	\end{equation}
+	donde $A_k$ es un conjunto de dimensión $2k$ de números complejos.
+	
+	Desde un punto de vista computacional puede no ser ventajoso realizar la integral \eqref{eq:BIC11}. En cambio, la aproximación de Laplace se puede utilizar como una alternativa simple. Haciendo la aproximación de Laplace para la parametrización $\tau = \ln g$, se puede demostrar que el factor de Bayes del $BIC-lp$ es \cite{Nielsen2013}
+	\begin{equation}
+		\mathrm{BF}[\setM_k,\setM_N] = \int_{-\infty}^{\infty}\int_{A_k}q(\vecomega_k,\tau)\mathrm{d}\vecomega_k\mathrm{d}\tau
+	\end{equation}
+	donde el integrando está dado por
+	\begin{equation}
+		q(\vecomega_k,\tau) = \mathrm{BF}[\setM_k;\setM_N\mid \exp(\tau),\vecomega_k]p(\vecomega_k\mid\setM_k)p(\tau)
+		\label{eq:BIC12}
+	\end{equation}
+	con
+	\[p(\tau) = \exp(\tau)p(\exp(\tau)\mid\delta).\]
+	Usando la aproximación de Laplace
+	\begin{equation}
+		\mathrm{BF}[\setM_k,\setM_N] \approx \int_{-\infty}^{\infty} q(\hat{\vecomega}_k,\tau)(2\pi)^{\rho_k/2-1}\big|\mathbf{H}(\hat{\vecomega}_k)\big|^{-1/2}\mathrm{d}\tau.
+		\label{eq:BIC13} 
+	\end{equation}
+	donde 
+	\begin{equation}
+		\mathbf{H}(\vecomega_k) = \frac{\partial^2\ln q(\vecomega_k,\tau)}{\partial\vecomega_k\partial\vecomega_k^T}, 
+		\label{eq:BIC14}
+	\end{equation}
+	
+	Entonces, el modelo con la probabilidad posterior más alta es la solución a
+	\begin{equation}
+		\begin{aligned}
+			\hat{k} = \arg\max &\big[ -N\ln\big(\y^H(\matI_N-\frac{g}{g+1}\matP_\matZ)\y\big)-\ell_k\ln(1+\hat{g})\\ & +  \ln\hat{g} - \delta\ln(1+\hat{g}) + (2\ell_k+1)2\pi + \frac{1}{2}\ln(\gamma(\hat{g}\mid\vecomega_k)) - \frac{1}{2}\ln|\mathbf{H}(\vecomega_k)|\big].
+		\end{aligned}
+		\label{Eq:BIC15}
+	\end{equation}
+	
+	Donde 
+	
+	\[\matP_\matZ = \matZ(\boldsymbol{\omega}_k)\big(\matZ^H(\boldsymbol{\omega}_k)\matZ(\boldsymbol{\omega}_k)\big)^{-1}\matZ^H(\boldsymbol{\omega}_k)\]
+	\[R^2 = \frac{\y^H\matP_\matZ\y}{\y^H\y}\]
+	
+	\[\hat{g} = \exp\hat{\tau}\]
+	\[\hat{\tau} = \ln\bigg(\frac{\beta_\tau + \sqrt{\beta_\tau^2 - 4\alpha_\tau}}{-2\alpha_\tau}\bigg)\]
+	\[\beta_\tau = (N/r-1)R^2 + 2 + (N-\ell_k-\delta)/r - N/r,\]
+	\[\alpha_\tau = (1-R^2)(1+(N-\ell_k-\delta)/r - N/r)\]
+	\[\gamma(\hat{g}\mid\boldsymbol{\omega}_k) = \bigg[\frac{\hat{g}(N/r)(1-R^2)}{[1+\hat{g}(1-R^2)]^2}-\frac{\hat{g}(N-\ell_k-\delta)/r}{(1+\hat{g})^2}\bigg]\]
+	
+	
+	   \newpage
+	
+	\section{Apéndice}
+	%\addcontentsline{toc}{section}{\bfseries Appendices}
+	%\renewcommand{\thesubsection}{\arabic{subsection}}
+	%\setcounter{subsection}{0}
+	
+	\subsection{Lemas y definiciones auxiliares}
+	
+	Para demostrar los resultados obtenidos en este capítulo serán útiles los siguiente resultados.
+	\begin{lemma}
+		$\setX = \setY$ si y solo si $\Thetab(\setX,\setY) = \mathbf{0}$
+	\end{lemma}
+	\begin{proof}
+		Por construcción, los vectores $\{\x_1,\ldots,\x_s\}$ forman un base del subespacio $\setX$. De igual forma $\{\y_1,\ldots,\y_s\}$ es una base $\setY$. Si $\cos\theta_k=1$, se tiene que $\x_k$ e $\y_k$ están alineados. Por lo tanto, si todos los ángulos principales son cero, los conjuntos  $\{\x_1,\ldots,\x_s\}$ y $\{\y_1,\ldots,\y_s\}$ generan el mismo subespacio.
+		
+		Por otro lado, cuando $\setX=\setY$, es claro que 
+		\[\max_{\stackrel{\x\in\setX}{\y\in\setY}}\frac{|\langle\x,\y\rangle|}{\|\x\|_2\|\y\|_2} = 1\]
+		y por lo tanto, $\cos\theta_k = 1$ para todo $k$.
+	\end{proof}
+	
+	\begin{definition}
+		La distancia entre los subespacios $\setX$ e $\setY$ está dada por
+		\begin{equation}
+			\rho(\setX,\setY) = \max\bigg\{\max_{\stackrel{\x\in\setX}{\|\x\|_2=1}}\dist(\x,\setY),\max_{\stackrel{\y\in\setY}{\|\y\|_2=1}}\dist(\y,\setX) \bigg\}
+			\label{Eq:GapDistance}
+		\end{equation}
+	\end{definition}
+	
+	\begin{prop}\label{Prop:GapDistance}
+		Sean $\setX$ e $\setY$ dos subespacio, se definen $\matProj_{\setX}$ y $\matProj_{\setY}$ la proyección ortogonal sobre $\setX$ e $\setY$ respectivamente. Luego,
+		\begin{itemize}
+			\item[i)] $\rho(\setX,\setY)=\sin\theta_1$, con $\theta_1$ es el máximo ángulo principal entre $\setX$ e $\setY$.
+			\item[ii)] $\rho(\setX,\setY) = \|\matProj_{\setX}-\matProj_{\setY}\|_2$.
+		\end{itemize} 
+	\end{prop}
+	\begin{proof}
+        Sean  $\matX\in\C^{n\times s}$ e $\matY\in\C^{n\times s}$ matrices cuyas columnas forman una base orthonormal para los subespacios $\setX$ e $\setY$ respectivamente. Por lo tanto, se definen las matrices de proyección $\matProj_{\setX} = \matX\matX^H$ y $\matProj_{\setY} = \matY\matY^H$.
+        
+        Como consecuencia de la descomposición coseno-seno \cite{Stewart1990} existen matrices unitarias $\matU,\matV\in\C^{s\times s}$ y $\matQ\in\C^{n\times n}$ tal que si $2s\le n$,
+            \[\matQ\matX\matU = \begin{bmatrix} \matI_s\\[0.3em] \mathbf{0}\\[0.3em]\mathbf{0}\end{bmatrix},\qquad \matQ\matY\matV = \begin{bmatrix}\matC\\[0.3em] \matS\\[0.3em] \mathbf{0}\end{bmatrix}\]
+            donde $\matC, \matS$ son matrices diagonales tal que \[\matC = \cos\Thetab(\setX,\setY), \qquad \matS = \sin\Thetab(\setX, \setY).\] Además cumplen que $\matC^2+\matS^2=\matI$. Luego,
+
+            \[\begin{aligned} \matQ\matProj_{\setX}(\matI-\matProj_{\setY})\matQ & = \begin{bmatrix} \matI & \mathbf{0} & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}
+            \end{bmatrix}\begin{bmatrix} \matI - \matC^2 & -\matC\matS & \mathbf{0}\\[0.3em] -\matS\matC & \matS^2 & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}
+            \end{bmatrix}\\[0.3em]
+            & = \begin{bmatrix} \matI - \matC^2 & -\matC\matS & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}
+            \end{bmatrix} = \begin{bmatrix} \matS^2 & -\matC\matS & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}
+            \end{bmatrix}\\[0.3em]
+            & = \begin{bmatrix}\matS\\[0.3em]\mathbf{0}\\[0.3em] \mathbf{0}\end{bmatrix}\begin{bmatrix} \matS & -\matC & \mathbf{0} 
+            \end{bmatrix}. \end{aligned}\]
+
+            Dado que las filas de $\begin{bmatrix} \matS & -\matC & \mathbf{0} 
+            \end{bmatrix}$ son ortonormales, los valores singulares de $\matQ\matProj_{\setX}(\matI-\matProj_{\setY})\matQ$ son $\sin\theta_1,\sin\theta_2,\sin\theta_3,\ldots$. Por lo tanto,
+            
+            \begin{equation}\|\matProj_{\setX}(\matI-\matProj_{\setY})\|_2 = \sin\theta_1.\label{Eq:appendix_sin1}\end{equation}
+
+            De una forma similar, se obtiene
+             \[\matQ(\matProj_{\setX} - \matProj_{\setY})\matQ  =  \begin{bmatrix} \matS^2 & -\matC\matS & \mathbf{0}\\[0.3em] -\matC\matS & -\matS^2 & \mathbf{0}\\[0.3em] \mathbf{0} & \mathbf{0} & \mathbf{0}
+            \end{bmatrix}.\]
+             Dado que $\matS$ y $\matC$ son matrices diagonales, los valores singulares de $\matProj_{\setX}-\matProj_{\setY}$ son los valores singulares de las matrices de $2\times 2$
+            \[\begin{bmatrix} \sin\theta_i & -\cos\theta_i\sin\theta_i\\[0.3em] -\sin\theta_i\cos\theta_i & -\sin\theta_i\end{bmatrix}, \quad i = 1,\ldots, s,\]
+            que son $\sin\theta_i$ dos veces. Por lo tanto, como la norma espectral es igual al máximo valor singular, se obtiene
+            \begin{equation} \|\matProj_{\setX} - \matProj_{\setY}\|_2 = \sin\theta_1.\label{Eq:appendix_sin2}\end{equation}
+
+            A continuación, se demuestran $i)$ e $ii)$
+		\begin{itemize}
+		    \item[i)] La distancia entre un vector y un subespacio se puede escribir como
+                    \[dist(\x,\setY) = \|(\matI -\matProj_{\setY})\x\|_2.\]
+                    Luego,
+                    \[\begin{aligned} \max_{\stackrel{\x\in\setX}{\|\x\|_2=1}} \|(\matI -\matProj_{\setY})\x\|_2 & = \max_{\stackrel{\x\in\setX}{\|\x\|_2\le }} \|(\matI -\matProj_{\setY})\x\|_2\\[0.3em]
+                    & = \max_{\|\x\|_2=1}\|(\matI-\matProj_{\setY})\matProj_{\setX}\x\|_2 \\[0.3em]
+                    & = \|(\matI-\matProj_{\setY})\matProj_{\setX}\|_2 = \sin\theta_1.
+                    \end{aligned}\]
+                    Donde la última igual se obtiene de \eqref{Eq:appendix_sin1}
+                    De la misma forma, se obtiene que 
+                    \[\max_{\stackrel{\y\in\setY}{\|\y\|_2=1}}\dist(\y,\setX) = \|(\matI-\matProj_{\setX})\matProj_{\setY}\|_2 = \sin\theta_1.\]
+                Por lo tanto, se obtiene que 
+                \[\rho(\setX,\setY) = \sin\theta_1.\]
+                
+            \item[ii)] Como se observo en \eqref{Eq:appendix_sin2} el máximo valor singular de $\matProj_{\setX}-\matProj_{\setY}$ es $\sin\theta_1$. Por lo tanto se obtiene
+            \[\rho(\setX,\setY) = \|\matProj_{\setX}-\matProj_{\setY}\|_2\]
+            
+		\end{itemize}
+	\end{proof}
+	
