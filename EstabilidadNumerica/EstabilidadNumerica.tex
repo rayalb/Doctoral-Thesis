@@ -1,0 +1,544 @@
+
+\chapter{Estabilidad del algoritmo de estimación espectral} 
+\label{chap:EstabilidadNumerica}
+
+    
+	Incluso cuando los algoritmos destinados a mitigar el ruido demuestran eficacia, el cálculo de los autovalores utilizando técnicas como ESPRIT o MPM  puede presentar desafíos en términos de estabilidad. Este problema se agudiza notablemente en situaciones en las cuales la cantidad de modos de oscilación es considerable o cuando las frecuencias complejas se encuentran en proximidad cercana unas de otras. El enfoque aquí propuesto se enfoca en el análisis del comportamiento del proceso de estimación de frecuencias cuando los datos experimentales se ven sujetos a pequeñas perturbaciones. En particular, se centra en el estudio de la estabilidad numérica asociada al problema de autovalores generalizados, que se deriva a partir de la matriz de Hankel vinculada con la señal observada. Como se puso de manifiesto en el capítulo \eqref{chap:ModeloSumExp}, se observa que la sensibilidad inherente de cada autovalor guarda una relación inversamente proporcional con el producto escalar entre los autovectores izquierdo y derecho, ponderados por la matriz de Hankel. Este producto escalar se relaciona directamente con la amplitud correspondiente a la frecuencia amortiguada asociada al respectivo autovalor.
+
+    %Para el caso de suma de exponenciales complejas no amortiguadas en \cite{BATENKOV2018} se realiza un estudio del condicionamiento numérico de las estimaciones y se propone una estrategia de decimación de la señal dado un solo grupo de frecuencias muy cercanas entre sí. Esta estrategia permite aumentar artificialmente la distancia entre frecuencias. En \cite{Morren2003} también se propone un esquema de decimación para luego resolver un problema de cuadrados mínimos totales. Sin embargo, en estos dos trabajos el factor de decimación se elige para asegurarse de que no se introduzca solapamiento (\emph{aliasing}).  Para superar esta restricción, la señal original debe ser sobremuestreada.
+        
+    %En un ángulo diferente, en \cite{Bolt1979} se analiza el contenido espectral de series de tiempo geofísicas haciendo desplazamiento de frecuencia y posteriormente filtrando la señal observada. Al hacer esto, es posible identificar las frecuencias de resonancias contenidas en la señal observada.
+ 
+    En este capítulo, se extiende los resultados obtenidos en el capítulo \ref{chap:OrdenModelo} sección \ref{sec:EstNum1} y se demuestra que la aproximación de primer orden de los autovalores perturbados no sólo depende de la amplitud asociada a los autovalores, sino también a la distancia entre los autovalores. Por lo tanto, los autovalores que estén muy cerca uno del otro son propensos a exhibir grandes desviaciones de sus valores reales, incluso cuando la señal observada está ligeramente perturbada. Además, usando la reinterpretación de la propiedad de invariancia a partir de los ángulos entre subespacios, también se obtiene una cota para la máxima perturbación. Estos resultados, fueron publicados en \cite{Albert2020,ALBERT2023}.
+    
+    Finalmente, se propone una estrategia para preprocesar la señal observada mediante un procesamiento multitasa. Esto tiene la capacidad de ``acomodar'' las frecuencias complejas para un cálculo más estable. Esta idea es validada por experimentos numéricos y se compara con los resultados obtenidos en publicaciones anteriores. Estos resultados fueron publicados en \cite{Albert2020}
+	
+	\section{Derivadas de los autovalores generalizados}
+	
+		Sea $\lambda_i$ el $i-$ésimo autovalor generalizado del par $(\matA,\matB)\in\C^{m\times n}$ con autovectores derechos e izquierdos $\v_i\in\C^n$ y $\vecpsi_i\in\C^m$ respectivamente. Se asume que $\matA$ y $\matB$ son matrices de rango completo y que todos los $\lambda_i$ son distintos. Por definición se tiene que
+		\begin{equation}
+			\matA\v_i = \lambda_i\matB\v_i,\qquad \vecpsi_i^H\matA = \lambda_i\vecpsi_i^H\matB.
+			\label{Eq:Estabilidad1}
+		\end{equation}
+		A continuación, se consideran variaciones suaves en las matrices $\matA$ y $\matB$  dado un parámetro $\varepsilon\in\R$ en el entorno del origen, es decir, $\varepsilon\in\mathcal{B}(0) = \big\{\varepsilon\in\R:|\varepsilon-0|\le r\big\}$, para algún $r>0$. 
+	
+		Se asume que existen funciones diferenciables $\v_i(\varepsilon)$, $\vecpsi_i(\varepsilon)$, $\lambda_1(\varepsilon),\ldots,\lambda_n(\varepsilon)$, para todo $\varepsilon\in\mathcal{B}(0)$
+		\begin{equation}
+			\begin{aligned} 
+				& \matA(\varepsilon)\v_i(\varepsilon) = \lambda_i(\varepsilon)\matB(\varepsilon)\v_i(\varepsilon),\\[0.3em] 
+                & \vecpsi_i^H(\varepsilon)\matA(\varepsilon) = \lambda_i(\varepsilon)\vecpsi_i^H(\epsilon)\matB(\varepsilon).
+			\end{aligned}
+			\label{Eq:Estabilidad2}
+		\end{equation}
+		tal que $\lambda_i(0) = \lambda_i$, $\v_i(0) = \v_i$, $\vecpsi_i(0) = \vecpsi_i$, con $i = 1,\ldots, n$.
+	
+		\begin{theorem}\label{Th:Estabilidad_Autovalores}
+			Dados $\matA(\varepsilon),\matB(\varepsilon)\in\C^{m\times n}$ tal que se satisface \eqref{Eq:Estabilidad2} para todo $\varepsilon\in\mathcal{B}(0)$, se tiene que
+			\begin{equation}
+				\dot{\lambda}_i = \frac{\mathrm{d}\lambda_i(\varepsilon)}{\mathrm{d}\varepsilon} = \frac{\vecpsi_i^H\big[\dot{\matA}-\lambda_i\dot{\matB}\big]\v_i}{\vecpsi_i^H\matB\v_i},
+				\label{Eq:Eigenvalue_derivative}
+			\end{equation} 
+			donde $\dot{\matA}$ y $\dot{\matB}$ son las derivadas con respecto a $\varepsilon$ de $\matA(\varepsilon)$ y $\matB(\varepsilon)$.
+		\end{theorem}
+		\begin{proof}
+			Sean $\matV = \big[\v_1,\cdots,\v_n\big]\in\C^{n\times n}$ y $\matW^H = \big[\w_1^H,\cdots,\w_n^H\big]\in\C^{n\times m}$ dos matrices con autovectores a derecha e izquierda respectivamente, y la matriz diagonal $\Lambdab = \diag(\lambda_i)$ con los autovalores. Luego, \eqref{Eq:Estabilidad1} se puede reescribir como
+			\begin{equation}
+				\matA\matV = \matB\matV\Lambdab
+				\label{Eq:TeoremaEstabilidad_1}
+			\end{equation}
+			\begin{equation}
+				\matW^H\matA = \Lambdab\matW^H\matB.
+				\label{Eq:TeoremaEstabilidad_2}
+			\end{equation}
+			Multiplicando por $\matW^H$ a ambos lados en \eqref{Eq:TeoremaEstabilidad_1} se obtiene
+			\[\matW^H\matA\matV = \matW^H\matB\matV\Lambdab = \Lambdab\matW^H\matB\matV,\]
+			donde la última igualdad se debe a \eqref{Eq:TeoremaEstabilidad_2}. Dado que la matriz diagonal $\Lambdab$ conmuta con $\matW^H\matB\matV$, esta última matriz es diagonal, así como $\matW^H\matA\matV$ también.
+		
+			Si se consideran pequeñas perturbaciones definidas en \eqref{Eq:Estabilidad2}, diferenciando con respecto a $\varepsilon$, se obtiene
+			\begin{equation}
+				\dot{\matA}\matV + \matA\dot{\matV} = \dot{\matB}\matV\Lambdab + \matB\dot{\matV}\Lambdab + \matB\matV\dot{\Lambdab}
+				\label{Eq:TeoremaEstabilidad_3}
+			\end{equation}
+			Como las columnas de $\matV$ son una base de $\C^n$, cualquier vector en este espacio se puede escribir como una combinación lineal de $\v_i$. Luego,
+			\[\dot{\v}_j = \sum_{i=1}^n r_{ij}\v_i,\]
+			definiendo $\matR = \big[r_{ij}\big]\in\C^{n\times n}$ tal que $\dot{\matV} = \matV\matR$. Reemplazando en \eqref{Eq:TeoremaEstabilidad_3} y multiplicando a izquierda ambos lados por $\matW^H$ se obtiene
+			\begin{equation}
+				\matW^H\dot{\matA}\matV + \matW^H\matA\matV\matR = \matW^H\dot{\matB}\matV\Lambdab + \matW^H\matB\matV\matR\Lambdab + \matW^H\matB\matV\dot{\Lambdab}.
+				\label{Eq:TeoremaEstabilidad_4}
+			\end{equation}
+		
+			Notar que 
+			\[\matW^H\matA\matV\matR-\matW^H\matB\matV\matR\Lambdab = \matW^H\matB\matV\big[\Lambdab\matR-\matR\Lambdab\big].\]
+			Los elementos en la diagonal de $\big[\Lambdab\matR-\matR\Lambdab\big]$ son ceros, debido a que $\Lambdab$ es una matriz diagonal. Además, como $\matW^H\matB\matV$ es una matriz diagonal, $\matW^H\matB\matV\big[\Lambdab\matR-\matR\Lambdab\big]$ también tiene ceros es su diagonal.
+		
+			La igualdad en \eqref{Eq:TeoremaEstabilidad_4} define  $m\times n$ ecuaciones. Evaluando aquellas correspondientes a los elementos diagonales se obtiene
+			\[\w_k^H\matB\v_k\dot{\lambda}_k = \w_k^H\big[\dot{\matA}-\lambda_k\dot{\matB}\big]\v_k\]
+			de igual forma que \eqref{Eq:Eigenvalue_derivative}
+		\end{proof}
+	
+		Cuando pequeñas perturbaciones en las matrices $\matA$ y $\matB$ producen grandes desviaciones $\lambda_i$ de su verdadero valor, se dice que el autovalor está ``mal condicionado''. Según el Teorema \eqref{Th:Estabilidad_Autovalores} cuando $\vecpsi_1^H\matB\v_i$ es pequeño podemos decir que $\lambda_i$ está mal condicionado. Este es el caso cuando $\vecpsi_i$ está cerca de ser  perpendicular a $\matB\v_i$. Por otro lado, en \cite[ch. 7]{Golub1996} el producto $\vecpsi_i^H\matB\v_i$ ha sido asociado con la condición numérica de $\lambda_i$.
+	
+	\section{Perturbaciones en $\Hank_{\y}$}
+	
+		Cuando se analiza \eqref{MPM:eq}, se definen $\Hank_{\x,f}(\varepsilon)$ y $\Hank_{\x,l}(\varepsilon)$ a partir de $\Hank_{\x}(\epsilon)$, con $\varepsilon\in\R$. Para este caso, se enuncia el siguiente corolario
+	
+		\begin{Corollary}\label{Co:Estabilidad}
+			Sean $\Hank_{\x,f}(\varepsilon)$ y $\Hank_{\x,l}(\varepsilon)$ dos funciones diferenciables que representan las versiones perturbadas del par $(\Hank_{\x,f},\Hank_{\x,l})$. Para cada $\varepsilon\in\mathcal{B}(0)$, los autovalores $z_i(\varepsilon)$, y los autovectores a derecho e izquierda $\v_i(\varepsilon)$ y $\w_i(\varepsilon)$ existen y satisfacen \eqref{Eq:Estabilidad2}. Luego,
+			\begin{equation}
+				|\dot{z}_i| = \bigg|\frac{\mathrm{d}z_i}{\mathrm{d}\varepsilon}\bigg|\le E \frac{1+|z_i|}{|c_i|}\frac{\varepsilon_i}{|P_i(z_i)|^2}\quad i = 1,\ldots,r
+				\label{Eq:CorollaryEstabilidad1}
+			\end{equation} 
+			donde $E = \max(\|\dot{\Hank}_{\x,f}\|, \|\dot{\Hank}_{\x,l}\|)$, 
+			\[ P_i(z) = \prod_{\stackrel{l=1}{l\neq i}}^{r}(z-z_l)\]
+			es un polinomio en $z$ de grado $r-1$, y
+			\[\varepsilon_i= \frac{1}{2\pi}\int_{-\pi}^{\pi}|P_i(e^{\jmath\omega})|^2\mathrm{d}\omega.\]
+		\end{Corollary}
+		\begin{proof}
+			Aplicando el Teorema \eqref{Th:Estabilidad_Autovalores} al par $(\Hank_{\x,f},\Hank_{\x,l})$ , se obtiene
+			\begin{equation}
+				\begin{aligned}
+					|\dot{z}_i| & \le \frac{\|\dot{\Hank}_{\x,f} - z_i\dot{\Hank}_{\x,l}\|_2\|\w_i\|_2\|\v_i\|_2}{|\w_i^H\Hank_{\x,l}\v_i|} \\[0.3em]
+					& \le \max(\|\dot{\Hank}_{\x,f}\|_2, \|\dot{\Hank}_{\x,l}\|_2)\frac{(1+|z_i|)\|\w_i\|_2\|\v_i\|_2}{|\w_i^H\Hank_{\x,l}\v_i|},
+				\end{aligned}
+				\label{Eq:CorollaryEstabilidad2}
+			\end{equation}
+			con $\w_i$ y $\v_i$ son los autovectores a izquierda y derecha del par $(\Hank_{\x,f},\Hank_{\x,l})$.
+			Recordando la descomposición en matrices de Vandermonde de la matriz de Hankel dada en \eqref{eq:VandermondeDecomposition}, los autovectores satisfacen
+			\begin{equation}
+				\matZ_{r-1}^T\v_i = \one_i\qquad \w_i^H\matZ_{m-1} = \one_i^T
+				\label{Eq:CorollaryEstabilidad3}
+			\end{equation}
+			$\one_i$ es el $i-$ésimo vector unitario en $\R^r$. Además,
+			\begin{equation}
+				\w_i^H\Hank_{\x,l}\v_i = \w_i^H\matZ_{m-1}\matD\matZ_{r-1}^T\v_i = c_i
+				\label{Eq:CorollaryEstabilidad4}
+			\end{equation}
+			Definiendo $\matZ_{m-1}^T = \big[\matZ_{r-1}^T\ \matM^T\big]$, con $\matM\in\C^{(m-r)\times r}$, eligiendo $\w_i^T = [\v_i^T\ \mathbf{0}_{1\times(m-r)}]$ satisface \eqref{Eq:CorollaryEstabilidad3}. Por otro lado, y dado que $\matZ_{r-1}$ es una matriz invertible, \eqref{Eq:CorollaryEstabilidad3} implica que $\v_i$, es la $i-$ésima columna de $\matZ_{r-1}^{-T}$. Luego, usando el resultado dado en \cite{Rawashdeh2018}, para $k=1,\ldots,n$ se obtiene
+			\begin{equation}
+				\begin{aligned}
+					& (\v_i)_k = (-1)^{k-1}\frac{(\alpha_i)_k}{\prod_{\stackrel{l=1}{l\neq i}}^n(z_l-z_i)}\\[0.3em]
+					& (\alpha_i)_k = \sum_{l=1}^{\binom{r-1}{r-k}}z_{s_1}\cdots z_{s_{n-k}},
+				\end{aligned}
+				\label{Eq:CorollaryEstabilidad5}
+			\end{equation}
+			donde $s_1\cdots s_{n-k}$ es una combinación de $n-k$ elementos tomados del conjunto $\{1,\ldots,i-1,i+1,\ldots,n\}.$ Dada la elección del autovector a izquierda, se obtiene que $\|\w_i\|_2=\|\v_i\|_2$. Luego,
+			\begin{equation}
+				\|\w_i\|_2\|\v_i\|_2 = \frac{\sum_{k=1}^{r}|(\alpha_i)_k|^2}{\prod_{\stackrel{l=1}{l\neq i}}^r|z_l-z_i|^2}.
+				\label{Eq:CorollaryEstabilidad6}
+			\end{equation}
+			Además, $(\alpha_i)_k$ es el $k-$ésimo coeficiente del polinomio
+			\[P_i(z) = \prod_{\stackrel{l=1}{l\neq i}}^r(z-z_l).\]
+			Reordenando los términos, se obtiene que
+			\[z^{-(r-1)}P_i(z) = \sum_{k=0}^{r-1}(\alpha_i)_{n-1-k}z^{-k}.\]
+			Usando el teorema de Parseval entre la secuencia $\alpha_i{n-1-k}$ y su transformada de Fourier de tiempo discreta se obtiene
+			\begin{equation}
+				\sum_{k=0}^{r-1}|(\alpha_i)_k|^2 = \frac{1}{2\pi}\int_{-\pi}^{\pi}|P_i(e^{\jmath\omega})|^2\mathrm{d}\omega = \varepsilon_i
+				\label{Eq:CorollaryEstabilidad7}
+			\end{equation}
+			donde en la integrar se evalúa el polinomio $P_i(z)$ en el círculo unitario $z=e^{\jmath\omega}$. Reemplazando \eqref{Eq:CorollaryEstabilidad7} en \eqref{Eq:CorollaryEstabilidad6}, y junto con \eqref{Eq:CorollaryEstabilidad4} en \eqref{Eq:CorollaryEstabilidad2} se obtiene
+			\begin{equation}
+				|\dot{z}_i|\le E\frac{(1+|z_i|)}{|c_i|}\frac{\varepsilon_i}{\prod_{\stackrel{l=1}{l\neq i}}^r|z_l-z_i|^2}
+				\label{Eq:CorollaryEstabilidad8}
+			\end{equation}
+		\end{proof}
+	
+		El Corolario \eqref{Co:Estabilidad} muestra que los algoritmos de estimación espectral, como ESPRIT o MPM, la estimación de $z_i$ es sensible no solo a $|c_i|$ pero también a $\min_l|z_l-z_i|$. La constante $c_i$ representa el residuo asociado a $z_i$ y se relaciona con la energía observada de la frecuencia compleja. Por lo tanto, cuando $|c_i|$ es pequeña, el autovalor asociado puede ser fácilmente perturbado. Por otro lado, cuando un autovalor está localizado dentro de un cluster de autovalores, $\dot{z}_i$ puede tomar valores muy grandes. Como resultado, la sensibilidad a los errores numéricos de la frecuencia estimada $z_i$ se ve afectada no solo por la energía de cada frecuencia compleja, sino también por la proximidad entre los diferentes modos. 
+		
+		
+	\subsection{Perturbaciones haz matricial usando ángulos principales}
+	
+	
+	Una interpretación de como puede afectar las perturbaciones a la solución del problema de autovalores generalizados se puede realizar en función de la relación entre los ángulos principales y el principio de invariancia introducidos en el capítulo \eqref{chap:OrdenModelo}. 
+	
+	Sea el caso particular $s=r$ y se considera que $\matQ_l\matQ_l^\dagger = \matG(\matZ + \delta\matZ)\matG^{-1}$, donde $\delta\matZ$ es una matriz diagonal que contiene la perturbación asociada a cada autovalor y $\matG$ es la matriz de autovectores. Luego, de acuerdo con \eqref{eq:ESTER_cost},
+	\begin{equation} J_{ESTER}(r) = \|\matQ_f -\matQ_l\matG(\matZ+\delta\matZ)\matG^{-1}\|_2\le \sin\vartheta_1. \label{eq:Jester_appendix}\end{equation}
+	Por otro lado,
+	\begin{equation}
+	\begin{aligned} 
+	J_{ESTER}(r) & \ge \frac{1}{\sqrt{r}}\big\|\left[ \matQ_f\ \matQ_l\right]\begin{bmatrix} \matI_r \\ -\matG(\matZ+\delta\matZ)\matG^{-1}\end{bmatrix} \big\|_F\\[0.3em]  & \ge \frac{1}{\sqrt{r}}\sigma_r\bigg(\begin{bmatrix} \matI_r \\ -\matG(\matZ+\delta\matZ)\matG^{-1}\end{bmatrix}\bigg)\sigma_{r+1}\big(\left[ \matQ_f\ \matQ_l\right]\big),
+	\end{aligned}
+	\label{Eq:vartheta2_1}
+	\end{equation}
+	donde la última desigualdad es debido a \cite[Teo. 2]{WANG1997}. También, usando la descomposición polar \cite{Horn1991}
+	\[\left[\matQ_f\ \matQ_l\right] = \left[\hat{\matQ}_f\ \hat{\matQ}_l\right]\begin{bmatrix} \big(\matI_r-\u_f^H\u_f\big)^{\frac{1}{2}} & \mathbf{0} \\[0.3em] \mathbf{0} & \big(\matI_r-\u_l^H\u_l\big)^{\frac{1}{2}} 
+	\end{bmatrix},\]
+	por \cite{Horn1990} se obtiene
+	\begin{equation}
+	\sigma_{r+1}\big(\left[ \matQ_f\ \matQ_l\right]\big)\ge \Delta\sqrt{2}\sin\frac{\vartheta_1}{2}
+	\label{Eq:sigma_r+1}
+	\end{equation}
+	con 
+	\[\Delta = \min\big\{\sqrt{1-\|\u_f\|_2^2}, \sqrt{1-\|\u_l\|_2^2}\big\}. \quad \Delta\in(0,1).\]
+	Además, usando el Teorema de Weyl \cite{Horn1991} se obtiene
+	\begin{equation}
+	\sigma_r\bigg(\begin{bmatrix} \matI_r \\ -\matG(\matZ+\delta\matZ)\matG^{-1}\end{bmatrix}\bigg)\ge \sqrt{1+\kappa^{-2}\big[\sigma_r(\matZ)-\sigma_1(\delta\matZ)\big]^2}
+	\label{Eq:sigma_r}
+	\end{equation}
+	donde $\kappa$ es el número de condición de la matriz $\matG$. Luego, remplazando \eqref{Eq:sigma_r+1} y \eqref{Eq:sigma_r} en \eqref{Eq:vartheta2_1} y considerando  \eqref{eq:Jester_appendix}, se obtiene
+	\[|\sigma_r(\matZ)-\sigma_1(\delta\matZ)|\le \kappa\sqrt{\frac{2r}{\Delta^2}\cos^2\frac{\vartheta}{2}-1}\]
+	Luego, considerando que $\sigma_1(\delta\matZ) = \max_i|\delta z_i|$, $\sigma_r(\matZ) = \min_i|z_i|$, se obtiene
+	\[\big|\min_i|z_i|-\max_i|\delta z_i|\big|\le \kappa\sqrt{\frac{2r}{\Delta^2}\cos^2\frac{\vartheta_1}{2}-1}.\]
+	
+	Finalmente, se obtiene que la perturbación del máximo autovalor esta acotada por
+	\begin{equation}
+	|\delta z_{max}|<|z_{min}| + \kappa\sqrt{\frac{2r}{\Delta^2}\cos^2\frac{\vartheta_1}{2}-1}.
+	\label{bound1}
+	\end{equation}
+	Esta cota permite analizar la sensibilidad de los autovalores de una forma diferente a \eqref{Eq:CorollaryEstabilidad8}. A partir de \eqref{bound1}, es claro que desalineamiento entre los espacios columna de $\Hank_{\y,l}$ y $\Hank_{\y,f}$ contribuye a la perturbación del problema de autovalores generalizados.
+	
+
+	\section{Solución al problema de estabilidad numérica} 
+		
+		Como se demostró anteriormente, el desempeño de los algoritmos de estimación espectral se ve degradada  cuando las frecuencias están muy juntas entre sí. Para el caso de suma de exponenciales complejas no amortiguadas en \cite{BATENKOV2018} se realiza un estudio del condicionamiento numérico de las estimaciones y se propone una estrategia de decimación de la señal dado un solo grupo de frecuencias muy cercanas entre sí. Esta estrategia permite aumentar artificialmente la distancia entre frecuencias. En \cite{Morren2003} también se propone un esquema de decimación para luego resolver un problema de cuadrados mínimos totales. Sin embargo, en estos dos trabajos el factor de decimación se elige para asegurarse de que no se introduzca solapamiento (\emph{aliasing}).  Para superar esta restricción, la señal original debe ser sobremuestreada.
+		
+		En un ángulo diferente, en \cite{Bolt1979} se analiza el contenido espectral de series de tiempo geofísicas haciendo desplazamiento de frecuencia y posteriormente filtrando la señal observada. Al hacer esto, es posible identificar las frecuencias de resonancias contenidas en la señal observada.
+		
+		%Con base en los resultados obtenidos en el capítulo \ref{chap:ModeloSumExp}, se propone un estrategia para preprocesar la señal observada mediante un procesamiento multitasa. Esto tiene la capacidad de ``acomodar'' las frecuencias complejas para un cálculo más estable. Esta idea es validada por experimentos numéricos y se compara con los resultados obtenidos en publicaciones anteriores.
+	
+		\subsection{Estrategia \emph{Shift-and-Zoom}}
+		
+			Considerando que las muestras $y_k$ se obtienen después de muestrear uniformemente la versión en tiempo continuo 
+			\begin{equation}
+				y(t) = \sum_{i=1}^r c_ie^{\xi_i t} + w(t)
+				\label{Eq:signalTimeCont}
+			\end{equation}
+			donde $\xi_i = \gamma_i+\jmath 2\pi\nu_i$. Se tiene que $y_k = y(kT_s)$, siendo $T_s$ es período de muestreo, y $z_i = e^{\xi T_s}$. Claramente, la ubicación de los diferentes $z_i$ en el plano complejo se puede controlar ajustando juiciosamente el tiempo de muestreo. Sin embargo, la elección del tiempo $T_s$ está sujeta a varias limitaciones al diseñar el sistema de adquisición de señales, y al agregar requisitos adicionales puede resultar que el diseño no sea factible. Sin embargo, la ubicación de los $z_i$ también puede cambiarse diezmando la señal observada \cite{Vaidyanathan1993}.
+	
+			Asumiendo que el contenido espectral de la señal observada está concentrado en el intervalo $\Upsilon = [\nu_{min},\nu_{max}]$, es decir que
+			\begin{equation}
+				z_i = e^{\gamma_iT_s}[\cos(2\pi\nu_iT_s)+\jmath\sin(2\pi\nu_iT_s)], \quad \nu_i\in\Upsilon,\ i=1,2,\ldots,r.
+				\label{Eq:FrecInterval}
+			\end{equation}
+	
+			Antes de realizar la estimación de los $z_i$ se quiere realizar un \emph{zoom} sobre $\Upsilon$ de manera de poder mejorar el rendimiento del algoritmo de estimación. Para ello se procede de la siguiente manera. Sea 
+			\[\nu_c = \frac{\nu_{max}-\nu_{min}}{2},\]
+			se define la siguiente operación
+			\begin{equation}
+				y_k^{bb} = y_ke^{-\jmath\nu_c kT_s}.
+				\label{Eq:BaseBandSignal}
+			\end{equation} 
+			La señal $y_k^{bb}$ se conoce como el equivalente de banda base de $y_k$. A continuación, se considera un escalar $Q\in\R_{>0}$ tal que $\Upsilon Q\le \frac{2\pi}{T_s}$. Luego, usando el esquema de la Fig.~\ref{Fig:BlockDiagram2}, se construye la señal $y_k^{bb,D}$ después de filtrar y decimar la señal $y_k^{bb}$. Para evitar el efecto de \emph{aliasing}, la señal $y_k^{bb}$ es filtrada antes de realizar el submuestreo por un filtro de respuesta finita al impulso y fase lineal. Finalmente, la señal $y_k^{bb,D}$ es usada para estimar las frecuencias. Nos referimos a esta estrategia como \emph{Shift-and-zoom}.
+	
+			\begin{figure}[t]
+				\centering
+				%\includegraphics[width=0.5\textwidth]{filter.pdf}%
+				\resizebox{\linewidth}{!}{\input{Diagramas/filter.tex}}
+				\caption{Esquema \emph{Shift-and-zoom}  para la estimación de frecuencias complejas}
+				\label{Fig:BlockDiagram2}
+			\end{figure}
+	
+			Usando el equivalente en banda base decimado $y_k^{bb,D}$, se estiman las frecuencias complejas usando los algoritmos de estimación espectral explicados en el capítulo \eqref{chap:ModeloSumExp}. Sean $z_i^{bb,D}$ las frecuencias estimadas obtenidas a partir de $y_k^{bb,D}$. Claramente
+			\begin{equation}
+				z_i = (z_i^{bb,D})^{\frac{1}{Q}}e^{\jmath\nu_cT_s}
+				\label{Eq:EstimatedFrequencies}
+			\end{equation}
+	
+			Al decimar o submuestrear la señal $y_k$ por un factor $Q$, las frecuencias complejas se mueven en el plano complejo. Para un $Q>1$, las frecuencias que están muy juntas en la región $\Upsilon$ pueden separarse, disminuyendo el valor de $\dot{z}_i$, haciendo que la estimación espectral sea más precisa. Es importante resaltar que el filtro pasa-bajos incluido en el esquema de \emph{Shift-and-Zoom} en la Fig.~\ref{Fig:BlockDiagram2} modifica las amplitudes asociadas a los modos complejas $z_i$ afectando el valor de la derivada de los $z_i$ en \eqref{Eq:Eigenvalue_derivative}.
+	
+			A continuación, se tiene que $\nu_i\in\cup_{l=1}^L\Upsilon_l$, para todo $i=1,\ldots,r$, donde $\Upsilon_l = [{\nu_l}_{min},{\nu_l}_{max}]$ son intervalos disjuntos. En este caso, los $z_i$ se separan en L grupos diferentes en el plano complejo. Para mejorar el rendimiento, el procedimiento descrito anteriormente puede repetirse para cada grupo $\Upsilon_l$, con $l=1,2,\ldots,L$. Además, dado que los intervalos $\Upsilon_l$ no necesariamente deben tener la misma longitud, el factor de decimación puede ser diferente para cada $l$. El procedimiento completo se muestra en la Fig.~\ref{Fig:BlockDiagram3}
+	
+			\begin{figure}[t]
+				\centering
+				%\includegraphics[width=0.5\textwidth]{filter_clusters.pdf} 
+				\resizebox{\linewidth}{!}{\input{Diagramas/filter_clusters.tex}}
+				\caption{Diagrama en bloques para procesar la señal compuesta por $L$ conjuntos de frecuencias.}
+				\label{Fig:BlockDiagram3}
+			\end{figure}
+	
+	\section{Experimentos numéricos}
+	
+		Para evaluar el rendimiento de la estrategia \emph{Shift-and-Zoom} descrita en la sección anterior, se simularán dos ejemplos de suma de exponenciales complejas con diferente relación Señal a Ruido (SNR). En ambos casos, se estiman los modos complejos $\xi = \gamma_i+\jmath\nu_i$ y se comparan los resultados usando el procedimiento en presentado en \cite{Andersson2014}. De modo de valorar el desempeño de ambos algoritmo, se repetirán los experimentos $K$ veces y se calculará los errores cuadrático medio (RMSE) para las frecuencias y los factores de amortiguamiento estimados.
+		\begin{equation}
+			\begin{aligned}
+				& \hat{\sigma}_{\nu} = \sqrt{\frac{1}{K}\sum_{k=1}^{K}\sum_{i=1}^{r}(\nu_i - \hat{\nu}_{i_k})^2} \\[0.3em]
+				& \hat{\sigma}_{\gamma} = \sqrt{\frac{1}{K}\sum_{k=1}^{K}\sum_{i=1}^{r}(\gamma_i-\hat{\gamma}_{i_k})^2}
+			\end{aligned}
+			\label{Eq:RMSE}	
+		\end{equation}
+		siendo $\hat{\nu}_{i_k}$ y $\hat{\gamma}_{i_k}$ son las estimaciones obtenidas luego de $k-$ésima corrida en la simulación de Monte Carlo.
+
+        \subsection{Cota Inferior de Cramér-Rao}\label{App:CRB}
+		
+			Tomando $N$ muestras de la señal \eqref{Eq:signalTimeCont}, con $c_i = \eta_ie^{\jmath\theta_i}$, $z_i = e^{(\gamma_i+\jmath2\pi\omega_i)T_s}$. Se asume que el ruido $w_k$ es un proceso Gaussiano complejo, circularmente simétrico, idénticamente distribuido, con parte real e imaginaria no correlacionadas de media cero con varianza $\sigma_w^2$.
+			
+			Siguiendo \cite{Yao1995}, la función de verosimilitud logarítmica se puede expresar como
+			\begin{equation}
+				\L(\y\mid \vecalpha) = -N\log(2\pi) - N\log(\sigma_w^2) - \frac{(\y - \x)(\y-\x)^H}{\sigma_w^2}
+				\label{Eq:LogLikelihood}
+			\end{equation}
+			donde $\vecalpha = [\nu_1,\ldots,\nu_r,\gamma_i,\ldots,\gamma_r,\eta_1,\ldots,\eta_r,\theta_1,\ldots,\theta_r]^T\in\R^{4r}$. 
+			
+			La cota de Cramér-Rao de las estimaciones de los parámetros en el vector $\vecalpha$ forman los elementos en la diagonal de la inversa de la matriz de información de Fisher.
+			\begin{equation}
+				\I(\vecalpha) = \E\bigg[\frac{\partial\L(\y\mid\vecalpha)}{\partial\vecalpha}\bigg(\frac{\partial\L(\y\mid\vecalpha)}{\partial\vecalpha}\bigg)^T\bigg]
+				\label{Eq:FisherInformationMatrix}
+			\end{equation}
+			
+			Luego,
+			
+			\begin{equation}
+				\I(\vecalpha) =\frac{1}{ \sigma_w^2}\bigg(2\Re\bigg[\frac{\partial\x}{\partial\vecalpha}\bigg(\frac{\partial\x}{\partial\vecalpha}\bigg)^H\bigg]\bigg).
+				\label{Eq:FisherInformationMatrix1}
+			\end{equation}
+			
+			Calculando la derivada, 
+			\begin{equation}
+				\begin{aligned} \frac{\partial\x}{\partial\vecalpha} = \big[& \jmath kT_sc_1z_1^k,\ldots,\jmath kT_sc_rz_r^k,kT_sc_1z_1^k,\ldots,kT_sc_rz_r^k,e^{\jmath\theta_1}z_1^k,\ldots,e^{\jmath\theta_r}z_r^k,\\[0.3em]
+				& \jmath c_1z_1^k,\ldots,\jmath c_rz_r^k\big] \quad k=0,1,\ldots,N-1. \end{aligned}
+				\label{Eq:Partialderivatives}
+			\end{equation}
+			se puede reescribir como
+			\begin{equation}
+				\frac{\partial\x}{\partial\vecalpha} = \diag\begin{bmatrix} \Lambdab & \Lambdab & \matI & \Lambdab			\end{bmatrix}\begin{bmatrix}\jmath\Thetab\matT\matZ_{N-1}^T\\[0.3em] \Thetab\matT\matZ_{N-1}^T\\[0.3em] \Thetab\matZ_{N-1}^T \\[0.3em] \jmath\Thetab\matZ_{N-1}^T
+				\end{bmatrix} = \matS\matZ
+			\end{equation}
+			donde $\matZ_{N-1}$ es la matriz de Vandermonde definida en \eqref{Eq:VandermondeMatrix} y
+			\[\begin{aligned} & \matT =T_s\diag \begin{bmatrix}0 & 1 & \cdots & N-1
+			\end{bmatrix}\\[0.3em] 
+			& \Lambdab = \diag\begin{bmatrix} \eta_1 & \eta_2 & \cdots & \eta_r 	\end{bmatrix}\\[0.3em]
+			& \Thetab = \diag\begin{bmatrix}e^{\jmath\theta_1} & \cdots & e^{\jmath\theta_r}
+			\end{bmatrix}.\end{aligned}\]
+			
+			Luego, la inversa de la matriz de Información de Fisher se puede escribir como
+			\begin{equation}
+				\I^{-1}(\vecalpha) = \sigma_w^2\matS^{-1}\big[2\Re(\matZ\matZ^H)\big]^{-1}\matS^{-1} = \sigma_w^2\matS^{-1}\tilde{\matQ}\matS^{-1}.
+				\label{Eq:CRLB1}
+			\end{equation}
+			
+			Por lo tanto, se obtiene las cotas de Cramér-Rao como
+			
+			\begin{equation}
+				\mathrm{CRLB}(\nu_i) = \frac{\tilde{\matQ}_{ii}}{\mathrm{snr}_i}\quad i=1,\ldots,r
+				\label{Eq:CRLB_nu}
+			\end{equation}
+			
+			\begin{equation}
+				\mathrm{CRLB}(\gamma_i) = \frac{\tilde{\matQ}_{(i+r)(i+r)}}{\mathrm{snr}_i}\quad i=1,\ldots,r
+				\label{Eq:CRLB_gamma}
+			\end{equation}
+			
+			\begin{equation}
+				\mathrm{CRLB}(\eta_i) = \frac{\tilde{\matQ}_{(i+2r)(i+2r)}\eta_i^2}{\mathrm{snr}_i}\quad i=1,\ldots,r
+				\label{Eq:CRLB_eta}
+			\end{equation}
+			
+			\begin{equation}
+				\mathrm{CRLB}(\theta_i) = \frac{\tilde{\matQ}_{(i+3r)(i+3r)}}{\mathrm{snr}_i}\quad i=1,\ldots,r
+				\label{Eq:CRLB_theta}
+			\end{equation}
+			donde $\mathrm{snr}_i = \eta_i^2/\sigma_w^2$.
+			
+		
+		\subsection{Modos débiles}
+			
+			Como primer ejemplo, se toma la combinación lineal de 4 modos descritos en la tabla \ref{Table:Anderson}. Este ejemplo se tomó de \cite{Andersson2014}. 
+			
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{lllll}
+					$i$          & 1      & 2      & 3     & 4      \\ \hline 
+					$\nu_i$      & -7.68  & 39.68  & 40.96 & 99.84  \\ 
+					$\gamma_i$   & -0.274 & -0.150 & 0.133 & -0.221 \\ 
+					$|c_i|$      & 0.4    & 1.2    & 1.0   & 0.9    \\ 
+					$\angle c_i$ & -0.93  & -1.55  & -0.83 & 0.07   \\ 
+					\hline
+				\end{tabular}
+				\caption{Parámetros para la suma de exponenciales \cite{Andersson2014}}
+			\label{Table:Anderson}
+			\end{table}
+			
+			Para simular las muestras $y_k$ se usó un periodo de muestreo $T_s = 0.0039$ segundos. Para usar la estrategia \emph{Shift-and-Zoom}, se consideran tres intervalos de frecuencia disjuntos, $\Upsilon_1 = [0\,\,\, 15.39]Hz$, $\Upsilon_2 = [32.62\,\,\, 48.01]Hz$, y $\Upsilon_3 = [92.14\,\,\, 107.54]Hz$. Es claro que, $\nu_1\in \Upsilon_1$, $\nu_2, \nu_3 \in \Upsilon_2$, y $\nu_4\in \Upsilon_3$.
+			
+			Para este ejemplo, se asume que la ubicación de los distintos clusters se conoce a-priori. Por el contrario, si esta información no está disponible, se puede realizar una corrida preliminar del algoritmo de estimación para obtener estimaciones aproximadas de las bandas de frecuencias.
+			
+			Los tres intervalos definidos tiene el mismo ancho de banda. Aunque, ésta no es una condición necesaria para el algoritmo, simplifica su implementación. Usando este hecho, se usa un único filtro pasa-bajos y coeficiente de decimación para los tres intervalos de frecuencia definidos. En particular, se diseña un filtro FIR de fase lineal con una ventana rectangular de 16 coeficientes, con ancho de banda de 15.39Hz. El coeficiente de submuestreo es $Q=4$. Tomando $K-200$ se calculan $\hat{\sigma}_{\nu}$ y $\hat{\sigma}_{\gamma}$ para cada SNR. Los resultados se muestran en la Figura \ref{Fig:RMSE_ex1}.
+	
+			\begin{figure}[t]
+				%\centering
+				\begin{subfigure}{0.5\textwidth}
+					\centering	
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_andersson.pgf}}
+					\caption{RMSE frecuencias.}
+					\label{Fig:RMSE_nu_ex1}
+				\end{subfigure}
+				~
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_andersson.pgf}}
+					\caption{RMSE coeficientes de amortiguación.}
+					\label{Fig:RMSE_gamma_ex1}
+				\end{subfigure}
+				\caption{RMSE en función de SNR: Lineas punteadas corresponden a \cite{Andersson2014}; linea solida corresponde a \emph{Shift-and-Zoom}.}
+				\label{Fig:RMSE_ex1}
+			\end{figure}
+			
+			Para altas SNR, la técnica de \emph{Shift-and-Zoom} tiene rendimiento similar al método en \cite{Andersson2014}. Sin embargo, para SNR más bajas, el mejor número de condición de $\dot{z}_i$ se vuelve crítico, resultando en un rendimiento notablemente mejor de \emph{Shift-amd-Zoom} en comparación con enfoques más tradicionales. Sin embargo, es importante tener en cuenta que cuando se decima la señal, existe un compromiso entre la cantidad de muestras que quedan luego de la decimación y que tan separados resultan estar los modos complejos.
+			
+			Para evaluar el procedimiento, se calcula la cota de Cramér Rao (CRB) usando las expresiones desarrolladas en el apéndice \ref{App:CRB} \cite{Yao1995}. La CRB es una cota inferior de la varianza de cualquier estimador insesgado. Aunque no se demostró que los estimadores propuestos sean insesgados, se usará esta cota como indicador del margen de mejora en el procedimiento de estimación. Se observa que la CRB depende de $z_i$ y no $\xi_i$. Por lo tanto, cuando se submuestrea $y_k^{bb}$, la CRB cambiará. En la Figura \ref{Fig:CRB_ex1} se comparan las relaciones $\frac{\hat{\sigma}_{\nu}}{\sqrt{\mathrm{CRB}(\nu)}}$ y $\frac{\hat{\sigma}_{\gamma}}{\sqrt{\mathrm{CRB}(\gamma)}}$ para las estimaciones obtenidas a través del \emph{Shift-and-Zoom} y el procedimiento en \cite{Andersson2014}. 
+			
+			Notar que el factor de decimación tiene una cota superior determinada por el número de muestras en la señal original. Como se señaló en \cite{Yao1995} la CRB depende no sólo de la distancia entre frecuencias, sino también del número de muestras de la señal. De hecho, se señala que la CRB depende del producto de número de muestras y entre la separación de frecuencias.
+			\begin{figure}[t]
+				%\centering
+				\begin{subfigure}{0.5\textwidth}
+					\centering	
+					\resizebox{\linewidth}{!}{\input{Figuras/ratio_RMSE_CRB_nu.pgf}}
+					\caption{Relación ente RMSE y CRB para $\nu$.}
+					\label{Fig:CRB_nu_ex1}
+				\end{subfigure}
+				~
+				\begin{subfigure}{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/ratio_RMSE_CRB_gamma.pgf}}
+					\caption{Relación entre RMSE y CRB para $\gamma$.}
+					\label{Fig:CRB_gamma_ex1}
+				\end{subfigure}
+				\caption{Relación entre RMSE y CRB en función de SNR. Lineas punteadas corresponden a \cite{Andersson2014}; linea solida corresponde a \emph{Shift-and-Zoom}.}
+				\label{Fig:CRB_ex1}
+			\end{figure}
+			
+			La longitud de la señal observada también es significante cuando se estiman los factores de amortiguamiento. Este problema se vuelve crítico cuando el orden del modelo estimado en mayor que el real. En este caso, los factores de amortiguamiento erróneos pueden afectar la estimación de los parámetros reales. En \cite{Hasan1982} se aborda este problema utilizando $\gamma_i' = \gamma_i/(m+n-1)$.
+			
+			Para analizar el efecto del factor de decimación $Q$, se comparó el RMSE entre la señal estimada y la señal verdadera para diferentes valores de $Q$. Los resultados se muestran en la tabla \ref{Table:RMSE_Q}. El mínimo RMSE se obtiene para $Q=4$. A medida que se aumenta $Q$, el RMSE aumenta debido a que se usan menos muestras. Por otro lado, cuando $Q$ decrece, aunque se analicen más muestras, se pierde el efecto de separación de frecuencia.
+			
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{llllllll}
+					$Q$ & 1 & 2 & 4 & 7 & 9 & 14 & 15 \\ \hline
+					RMSE & 15.27 & 15.26 & 7.82 & 11.25 & 12.09& 14.54 & 15.82 \\
+				\end{tabular}
+				\caption{RMSE en función del factor de decimación.}
+				\label{Table:RMSE_Q}
+			\end{table}						
+			
+		\subsection{Modos agrupados}
+		
+			Como segundo ejemplo, se considera la suma de 25 exponenciales amortiguadas con distintas amplitudes. Este ejemplo fue presentado en \cite{Cuyt2018} y los parámetros corresponden a una espectroscopia de resonancia magnética (MRS). El período de muestreo es $T_s = 0.4883\cdot 10^{-3}$ segundos. En la tabla \ref{Table:Cuyt} se muestran las frecuencias, factores de amortiguamiento y amplitudes para cada modo complejo. En la Fig.~\ref{Fig:loc_ava} se muestran las posiciones de los distintos $z_i = e^{(\gamma_i+\jmath 2\pi\nu_i)T_s}$, $i =1,\ldots,25$. Los 25 modos se pueden agrupar en 6 grupos disjuntos.	
+			
+			\begin{figure}[t]
+				\centering
+				\input{Figuras/eigenvalue_location_paper_cuyt.pgf}
+				\caption{Ubicación de los modos descriptos en la tabla \ref{Table:Cuyt} cuando $T_s = 0.4883\cdot 10^{-3}$ segundos.}
+				\label{Fig:loc_ava}		
+			\end{figure}
+			
+			
+			Con el fin de utilizar el procedimiento \emph{Shift-and-Zoom}, se consideran $L=5$ intervalos de frecuencia diferentes. Los límites de los intervalos y los factores de diezmado se encuentran en la tabla~\ref{Table:segments2}.  
+		
+			
+			\begin{table}[t]
+				\centering
+				\begin{tabular}{lllll}
+				 & $\nu_{c_i}$(Hz)       & $\nu_{i_{min}}$(Hz)      & $\nu_{i_{max}}$(Hz) & $Q_i$\\ 
+				 \hline
+				 
+				$\Upsilon_1$   & -349.45 & -390.41  & -308.49 & 4 \\ 
+				$\Upsilon_2$   & -130.29 & -191.73  & -68.85  & 3 \\ 
+				$\Upsilon_3$   & 14.95   &  4.71    & 25.19   & 4 \\ 
+				$\Upsilon_{4}$   & 140.95  & 100.61   & 166.45  & 5 \\ 
+					%$\Upsilon_5$   & 125.49  & 84.53    & 166.45  & 5 \\ \hline
+				$\Upsilon_5$   & 436.75  & 416.27   & 457.23  & 6 \\ 
+				\hline
+				\end{tabular}
+			\caption{Intervalos de frecuencia y factores de diezmado.}\label{Table:segments2}
+			\end{table}
+			
+			
+			Se procesa las muestras de $y_k$ con el algoritmo \emph{Shift-and-zoom} y se comparan las estimaciones con las obtenidas sin el preprocesamiento. Las figuras \ref{Fig:RMSE_Cluster_nu} y \ref{Fig:RMSE_Cluster_gamma} muestran el RMSE de las frecuencias y los factores de amortiguamiento estimados para los diferentes clústeres usando ambas técnicas. Para una mejor presentación de los resultados, el cluster $IV$ se divide en dos. Cluster $IV(a)$ con 4 frecuencias y el Cluster $IV(b)$ con 3 frecuencias.
+			
+			En el caso de bajas $SNR$ el procedimiento \emph{Shift-and-Zoom} presenta un mejor rendimiento que el enfoque tradicional. Dado que \emph{Shift-and-Zoom} aumenta la separación de las frecuencias, mejorando $\dot{z}_i$ hace que el algoritmo de estimación sea más resistente a perturbaciones de ruido. Esta observación es aún más relevante cuando la amplitud $|c_i|$ es pequeña. Este es el caos de los modos $\xi_{14}$ a $\xi_{17}$ en el cluster $IV(a)$. 
+			
+			En este ejemplo, es fundamental diezmar $y^{bb}_k$ en lugar de $y_k$ directamente. Si se hubiera hecho esto último, el factor de diezmado máximo habría sido $Q =2$ para evitar \emph{aliasing}. Dicho valor para $Q$ da como resultado una estimación deficiente de algunos parámetros, en particular los del cluster $IV(a)$. Al implementar la estimación en paralelo para los distintos clusters, se pudo separar aún más las frecuencias complejas, mejorando el rendimiento final. Usando este enfoque, se transformó un problema mal condicionado en cinco problemas diferentes que están mejor condicionados.		
+			%\newpage
+			\begin{figure}[h!]
+				%\centering
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_Cuyt_Cluster_I.pgf}}
+					\caption{Cluster I}
+					\label{SubFig:Cluster_I_imag}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_Cuyt_Cluster_II.pgf}}
+					\caption{Cluster II}
+					\label{SubFig:Cluster_II_imag}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_Cuyt_Cluster_III.pgf}}
+					\caption{Cluster III}
+					\label{SubFig:Cluster_III_imag}
+				\end{subfigure}
+				~
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_Cuyt_Cluster_IV.pgf}}
+					\caption{Cluster IV $(a)$}
+					\label{SubFig:Cluster_IV_imag}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_Cuyt_Cluster_V.pgf}}
+					\caption{Cluster IV $(b)$}
+					\label{SubFig:Cluster_V_imag}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_nu_Cuyt_Cluster_VI.pgf}}
+					\caption{Cluster V}
+					\label{SubFig:Cluster_VI_imag}
+				\end{subfigure}
+				\caption{RMSE Frecuencias en función de SNR para los diferentes conjuntos. Lineas punteadas corresponden a \cite{Andersson2014}; lineas solidas corresponden a \emph{Shift-and-Zoom}.}
+				\label{Fig:RMSE_Cluster_nu}
+			\end{figure}
+			\newpage
+			\begin{figure}[h!]
+				%\centering
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_Cuyt_Cluster_I.pgf}}
+					\caption{Cluster I}
+					\label{SubFig:Cluster_I_real}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_Cuyt_Cluster_II.pgf}}
+					\caption{Cluster II}
+					\label{SubFig:Cluster_II_real}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_Cuyt_Cluster_III.pgf}}
+					\caption{Cluster III}
+					\label{SubFig:Cluster_III_real}
+				\end{subfigure}
+				~
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_Cuyt_Cluster_IV.pgf}}
+					\caption{Cluster IV $(a)$}
+					\label{SubFig:Cluster_IV_real}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_Cuyt_Cluster_V.pgf}}
+					\caption{Cluster IV $(b)$}
+					\label{SubFig:Cluster_V_real}
+				\end{subfigure}
+				\begin{subfigure}[h]{0.5\textwidth}
+					\centering
+					\resizebox{\linewidth}{!}{\input{Figuras/rmse_shift_and_zoom_gamma_Cuyt_Cluster_VI.pgf}}
+					\caption{Cluster V}
+				    \label{SubFig:Cluster_VI_real}
+				\end{subfigure}
+				\caption{RMSE coeficientes de amortiguamiento en función de SNR para los diferentes conjuntos. Lineas punteadas corresponden a \cite{Andersson2014}; lineas solidas corresponden a \emph{Shift-and-Zoom}.}
+				\label{Fig:RMSE_Cluster_gamma}
+			\end{figure}
+
+    %\section{Conclusiones}
+
+     %   Se analizo la estabilidad  numérica de las técnicas de estimación espectral. Se demostró que las estimaciones se vuelven vulnerables a pequeñas perturbaciones en los en los datos observados cuando las energía asociada a las frecuencias es pequeña y/o las frecuencias están muy cerca entre sí. La   técnica \emph{shift-and-zoom} hace frente a este problema cuando se dispone de información a priori. Se demostró que esta técnica supera a los enfoque basados en la estructura de la matriz de Hankel que no se benefician de la mejora en el espaciado entre las frecuencias complejas introducido por la  técnica \emph{shift-and-zoom}. Se demostró que este esquema es mas eficiente que los esquemas tradicionales cunado de trabaja en un régimen de SNR bajas. En cambio cuando la SNR es alta esta nueva técnica es tan eficiente como los métodos tradicionales. En este caso, la disminución en el número de muestras debido al paso de decimación se vuelve relevante y \emph{shift-and-zoom} requiere una cantidad de datos más grande para converger a limite de Cramér-Rao. Por lo tanto, existe una compensación entre el número de muestras y el factor de diezmado. 
+
+
+			
+		
